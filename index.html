@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Casino, Sports & Central Bank</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* UKŁAD WYŚRODKOWANY */
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 750px;
+            width: 100%;
+            z-index: 2;
+        }
+
+        /* CENTRUM ROZRYWKI */
+        .casino-wrapper {
+            width: 100%;
+            background: radial-gradient(circle, #1a252f, #080d11);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.25);
+            border: 4px solid #ffd700;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+            margin: 0 0 15px 0;
+            font-size: 2.8rem;
+            letter-spacing: 3px;
+        }
+
+        .financial-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .balance-box {
+            font-size: 1.3rem;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid #ffd700;
+        }
+
+        #balance { color: #2ecc71; font-weight: bold; }
+        #debt { color: #e74c3c; font-weight: bold; }
+
+        .game-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #444;
+            padding-bottom: 15px;
+        }
+
+        .tab-btn {
+            background: #222;
+            color: #aaa;
+            border: 2px solid #444;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #ffd700;
+            color: #000;
+            border-color: #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        /* PRZYCISK INSTRUKCJI I DYNAMICZNY PANEL */
+        .info-toggle-btn {
+            background: none;
+            border: 1px dashed #ffd700;
+            color: #ffd700;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: background 0.2s;
+        }
+        .info-toggle-btn:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .tutorial-box {
+            display: none;
+            background: rgba(20, 30, 40, 0.95);
+            border: 1px solid #34495e;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .tutorial-box h3 { margin-top: 0; color: #ffd700; }
+        
+        /* Tabela w instrukcji slotów */
+        .slots-info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .slots-info-table th, .slots-info-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #333;
+            text-align: left;
+        }
+        .slots-info-table th { color: #ffd700; }
+
+        .game-section {
+            display: none;
+            background: rgba(0,0,0,0.4);
+            padding: 20px;
+            border-radius: 15px;
+            min-height: 230px;
+        }
+
+        .game-section.active { display: block; }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        select, input[type="text"] {
+            padding: 10px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #ffd700;
+            font-weight: bold;
+        }
+
+        .action-btn {
+            background: linear-gradient(to bottom, #f1c40f, #f39c12);
+            border: none;
+            color: #000;
+            padding: 12px 25px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #d35400;
+            transition: all 0.1s ease;
+        }
+
+        .action-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #d35400;
+        }
+
+        .action-btn:disabled {
+            background: #555; color: #888; box-shadow: none; cursor: not-allowed; transform: none;
+        }
+
+        #message { margin-top: 20px; font-size: 1.3rem; min-height: 35px; font-weight: bold; }
+        .win { color: #2ecc71; text-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
+        .lose { color: #e74c3c; }
+
+        /* --- UKRYTY PANEL ADMINA (IKONA + SIDEBAR) --- */
+        .admin-trigger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #222;
+            border: 2px solid #e74c3c;
+            color: #ff4757;
+            font-size: 1.6rem;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .admin-trigger:hover { transform: rotate(45deg); background: #333; }
+
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 260px;
+            height: 100vh;
+            background: rgba(30, 15, 15, 0.95);
+            border-right: 3px solid #e74c3c;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.7);
+            z-index: 998;
+            padding: 80px 20px 20px 20px;
+            transition: left 0.3s ease-in-out;
+            box-sizing: border-box;
+        }
+        .admin-sidebar.open { left: 0; }
+        .admin-sidebar h2 { color: #ff4757; border-bottom: 2px solid #ff4757; padding-bottom: 8px; margin-top: 0; font-size: 1.4rem; text-transform: uppercase; }
+        .admin-status-indicator { background: rgba(0,0,0,0.4); padding: 5px; border-radius: 4px; margin: 5px 0 15px 0; font-size: 0.8rem; text-align: center; border: 1px dashed #e74c3c; }
+        .admin-btn-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .admin-btn { background: #ff4757; color: #fff; border: 1px solid #ff6b81; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+        .admin-btn:hover { background: #ff6b81; }
+        .admin-btn.gold { background: #2ed573; border-color: #2ecc71; }
+        .admin-btn.gold:hover { background: #2ecc71; }
+        .admin-btn.god-on { background: #9b59b6; border-color: #8e44ad; }
+        .admin-btn.god-on:hover { background: #8e44ad; }
+        .admin-btn.god-off { background: #7f8c8d; border-color: #95a5a6; }
+        .admin-btn.god-off:hover { background: #95a5a6; }
+
+        /* --- AUTOMATY --- */
+        .mode-selector { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: center; gap: 15px; font-size: 0.9rem; }
+        .mode-label { cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .slots-container-layout { display: flex; justify-content: center; align-items: center; gap: 30px; margin: 15px 0; }
+        .slots-display { display: flex; justify-content: center; gap: 15px; background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 15px; border: 2px solid #ffd700; }
+        .slot { width: 75px; height: 75px; background: #fff; color: #000; font-size: 2.8rem; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 2px solid #444; }
+        .lever-box { display: none; flex-direction: column; align-items: center; height: 140px; width: 40px; position: relative; }
+        .lever-track { width: 8px; height: 100px; background: #222; border: 2px solid #444; border-radius: 4px; position: relative; }
+        .lever-handle { width: 24px; height: 24px; background: radial-gradient(circle, #fff07c, #ffd700, #d35400); border-radius: 50%; position: absolute; left: -10px; top: 0px; cursor: grab; transition: top 0.05s linear; }
+        .lever-label { font-size: 0.75rem; color: #ffd700; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
+
+        /* --- RULETKA --- */
+        .neon-roulette-ring { width: 130px; height: 130px; border-radius: 50%; margin: 15px auto; display: flex; align-items: center; justify-content: center; font-size: 3.2rem; font-weight: bold; background-color: #222; border: 10px solid #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+        .roulette-options { display: flex; gap: 10px; margin-bottom: 10px; }
+        .radio-label { background: #333; padding: 8px 12px; border-radius: 5px; cursor: pointer; border: 1px solid #555; display: flex; align-items: center; gap: 5px; }
+
+        /* --- BLACKJACK --- */
+        .bj-table { display: flex; justify-content: space-around; margin: 15px 0; }
+        .bj-hand { background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px; width: 45%; border: 1px dashed #666; }
+        .cards { font-size: 1.8rem; margin-top: 10px; letter-spacing: 5px; min-height: 40px; }
+
+        /* --- BUKMACHER --- */
+        .match-box { background: rgba(0, 0, 0, 0.6); border: 2px solid #34495e; border-radius: 15px; padding: 15px; margin-top: 10px; }
+        .match-teams { font-size: 1.3rem; font-weight: bold; color: #ffd700; }
+        .match-live-score { font-size: 1.8rem; background: #111; padding: 5px 15px; border-radius: 8px; display: inline-block; margin: 8px 0; border: 1px solid #444; font-family: monospace; }
+        .match-odds-container { display: flex; justify-content: center; gap: 12px; margin-top: 10px; }
+        .odds-btn { background: #2c3e50; border: 1px solid #ffd700; color: #fff; padding: 8px; border-radius: 8px; cursor: pointer; font-weight: bold; flex: 1; font-size: 0.9rem; }
+        .odds-btn.selected { background: #e67e22; border-color: #fff; }
+
+        /* --- PRACA --- */
+        .job-card { background: rgba(255, 255, 255, 0.05); border: 1px solid #444; border-radius: 12px; padding: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; text-align: left; }
+        .job-details h3 { margin: 0 0 3px 0; color: #f1c40f; font-size: 1.1rem; }
+        .job-details p { margin: 0; font-size: 0.85rem; color: #bbb; }
+
+        /* --- BANK --- */
+        .bank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .bank-panel-box { background: rgba(44, 62, 80, 0.3); border: 1px solid #34495e; border-radius: 12px; padding: 12px; }
+        .bank-panel-box h3 { margin-top: 0; color: #ffd700; font-size: 1.1rem; margin-bottom: 10px; }
+        .bank-action-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .bank-btn { background: #2c3e50; color: #fff; border: 1px solid #3498db; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+        .bank-btn.full-width { grid-column: span 2; }
+    </style>
+</head>
+<body>
+
+    <button class="admin-trigger" onclick="toggleAdminPanel()">⚙️</button>
+
+    <div class="admin-sidebar" id="admin-panel">
+        <h2>🛠️ Admin Panel</h2>
+        <div class="admin-status-indicator">Tryb Boga: <span id="admin-god-status" style="color:#e74c3c; font-weight:bold;">WYŁĄCZONY</span></div>
+        <div class="admin-btn-grid">
+            <button class="admin-btn gold" onclick="adminAddMoney(10000)">💰 Daj +10 000 $</button>
+            <button class="admin-btn gold" onclick="adminAddMoney(100000)">💵 Daj +100 000 $</button>
+            <button class="admin-btn" onclick="adminClearDebt()">🔥 Wyczyść Dług</button>
+            <button class="admin-btn god-on" onclick="adminSetGodMode(true)">😎 Włącz Tryb Boga</button>
+            <button class="admin-btn god-off" onclick="adminSetGodMode(false)">🔴 Wyłącz Tryb Boga</button>
+            <button class="admin-btn" style="background:#57606f; border-color:#a4b0be;" onclick="location.reload()">🔄 Reset Gry</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="casino-wrapper">
+            <h1>GRAND CASINO</h1>
+            
+            <div class="financial-display">
+                <div class="balance-box">Balans: <span id="balance">1000</span> $</div>
+                <div class="balance-box" style="border-color: #e74c3c;">Dług: <span id="debt">0</span> $</div>
+            </div>
+
+            <div class="game-tabs">
+                <button class="tab-btn active" onclick="switchGame('slots')">🎰 Automaty</button>
+                <button class="tab-btn" onclick="switchGame('roulette')">🔴 Ruletka</button>
+                <button class="tab-btn" onclick="switchGame('blackjack')">🃏 Blackjack</button>
+                <button class="tab-btn" onclick="switchGame('sports')">⚽ Bukmacher</button>
+                <button class="tab-btn" onclick="switchGame('work')">🏢 Praca</button>
+                <button class="tab-btn" style="border-color: #3498db;" onclick="switchGame('bank')">🏦 Bank</button>
+            </div>
+
+            <button class="info-toggle-btn" onclick="toggleInstructionBox()">📖 Pokaż instrukcję do gry</button>
+            
+            <div class="tutorial-box" id="instruction-box"></div>
+
+            <div id="game-slots" class="game-section active">
+                <div class="mode-selector">
+                    <label class="mode-label"><input type="radio" name="control-mode" value="button" checked onchange="toggleControlMode()"> Przycisk SPIN</label>
+                    <label class="mode-label"><input type="radio" name="control-mode" value="lever" onchange="toggleControlMode()"> Wajcha</label>
+                </div>
+                <div class="slots-container-layout">
+                    <div class="slots-display">
+                        <div class="slot" id="slot1">🍒</div>
+                        <div class="slot" id="slot2">🍋</div>
+                        <div class="slot" id="slot3">🍊</div>
+                    </div>
+                    <div id="lever-container" class="lever-box">
+                        <div class="lever-track"><div id="lever-handle" class="lever-handle"></div></div>
+                        <div class="lever-label">Ciągnij</div>
+                    </div>
+                </div>
+                <div id="slots-btn-container"><button class="action-btn" id="slots-btn" onclick="playSlots()">ZAKRĘĆ BĘBNAMI!</button></div>
+            </div>
+
+            <div id="game-roulette" class="game-section">
+                <div id="roulette-ring" class="neon-roulette-ring">🎰</div>
+                <div>
+                    <div class="roulette-options" style="justify-content: center;">
+                        <label class="radio-label"><input type="radio" name="roulette-type" value="red" checked> Czerwone 🔴</label>
+                        <label class="radio-label"><input type="radio" name="roulette-type" value="black"> Czarne ⚫</label>
+                        <label class="radio-label"><input type="radio" name="roulette-type" value="number"> Numer:</label>
+                        <input type="text" id="roulette-num" placeholder="0-36" style="width: 50px; text-align: center;">
+                    </div>
+                </div>
+                <button class="action-btn" id="roulette-btn" style="margin-top:15px;" onclick="playRoulette()">OBRÓĆ KOŁEM</button>
+            </div>
+
+            <div id="game-blackjack" class="game-section">
+                <div class="bj-table">
+                    <div class="bj-hand"><div>Krupier (<span id="dealer-score">?</span>)</div><div class="cards" id="dealer-cards">🃏 🃏</div></div>
+                    <div class="bj-hand"><div>Ty (<span id="player-score">0</span>)</div><div class="cards" id="player-cards">-</div></div>
+                </div>
+                <div id="bj-controls" style="gap: 10px; justify-content: center; margin-bottom: 10px; display: none;">
+                    <button class="action-btn" style="background: #3498db; box-shadow: 0 4px 0 #2980b9;" onclick="bjHit()">Dobierz</button>
+                    <button class="action-btn" style="background: #e67e22; box-shadow: 0 4px 0 #d35400;" onclick="bjStand()">Pasuj</button>
+                </div>
+                <button class="action-btn" id="bj-start-btn" onclick="startBlackjack()">ROZDAJ KARTY</button>
+            </div>
+
+            <div id="game-sports" class="game-section">
+                <div class="match-box">
+                    <div class="match-teams" id="match-teams-display">Mecz generowany...</div>
+                    <div id="match-status" style="color: #aaa; font-style: italic; font-size:0.85rem;">Oczekiwanie na zakłady...</div>
+                    <div class="match-live-score" id="match-score-display">0 : 0</div>
+                    <div id="match-minute" style="color: #e67e22; font-weight:bold;">Przed meczem</div>
+                    <div class="match-odds-container">
+                        <button class="odds-btn" id="odds-1" onclick="selectBetSport('1')">1<br><span id="odd-1-val">1.95</span></button>
+                        <button class="odds-btn" id="odds-X" onclick="selectBetSport('X')">X<br><span id="odd-X-val">3.20</span></button>
+                        <button class="odds-btn" id="odds-2" onclick="selectBetSport('2')">2<br><span id="odd-2-val">2.50</span></button>
+                    </div>
+                </div>
+                <button class="action-btn" id="sports-btn" style="margin-top: 15px;" onclick="playSports()">POSTAW ZAKŁAD</button>
+            </div>
+
+            <div id="game-work" class="game-section">
+                <div class="job-card">
+                    <div class="job-details"><h3>🍾 Zbieranie Miedzi i Butelek</h3><p>Zarobek: 15 $ | Czas: 2s</p></div>
+                    <button class="action-btn" style="font-size: 0.9rem; padding: 6px 12px;" id="job-btn-1" onclick="startJob(1, 15, 2000)">Pracuj</button>
+                </div>
+                <div class="job-card">
+                    <div class="job-details"><h3>📦 Kurier / Magazynier</h3><p>Zarobek: 60 $ | Czas: 6s</p></div>
+                    <button class="action-btn" style="font-size: 0.9rem; padding: 6px 12px;" id="job-btn-2" onclick="startJob(2, 60, 6000)">Pracuj</button>
+                </div>
+                <div class="job-card">
+                    <div class="job-details"><h3>🚗 Kierowca Ubera</h3><p>Zarobek: 180 $ | Czas: 12s</p></div>
+                    <button class="action-btn" style="font-size: 0.9rem; padding: 6px 12px;" id="job-btn-3" onclick="startJob(3, 180, 12000)">Pracuj</button>
+                </div>
+                <div class="job-card">
+                    <div class="job-details"><h3>👨‍💻 Młodszy Programista</h3><p>Zarobek: 500 $ | Czas: 20s</p></div>
+                    <button class="action-btn" style="font-size: 0.9rem; padding: 6px 12px;" id="job-btn-4" onclick="startJob(4, 500, 20000)">Pracuj</button>
+                </div>
+                <div class="job-card">
+                    <div class="job-details"><h3>🏢 Dyrektor Korporacji</h3><p>Zarobek: 2500 $ | Czas: 45s</p></div>
+                    <button class="action-btn" style="font-size: 0.9rem; padding: 6px 12px;" id="job-btn-5" onclick="startJob(5, 2500, 45000)">Pracuj</button>
+                </div>
+                <div class="progress-container" id="job-progress-container" style="display:none; background:#222; border-radius:5px; margin-top:10px; overflow:hidden; border:1px solid #ffd700;"><div class="progress-bar" id="job-progress-bar" style="width:0%; height:15px; background:linear-gradient(90deg, #ffd700, #2ecc71);"></div></div>
+            </div>
+
+            <div id="game-bank" class="game-section">
+                <div class="bank-grid">
+                    <div class="bank-panel-box">
+                        <h3>Weź Pożyczkę 📝</h3>
+                        <div class="bank-action-list">
+                            <button class="bank-btn" style="border-color:#e74c3c;" onclick="takeLoan(100)">+ 100 $</button>
+                            <button class="bank-btn" style="border-color:#e74c3c;" onclick="takeLoan(500)">+ 500 $</button>
+                            <button class="bank-btn" style="border-color:#e74c3c;" onclick="takeLoan(5000)">+ 5 000 $</button>
+                            <button class="bank-btn" style="border-color:#e74c3c;" onclick="takeLoan(50000)">+ 50 000 $</button>
+                        </div>
+                    </div>
+                    <div class="bank-panel-box">
+                        <h3>Spłać Dług 💰</h3>
+                        <div class="bank-action-list">
+                            <button class="bank-btn" style="border-color:#2ecc71;" onclick="repayLoan(100)">Spłać 100</button>
+                            <button class="bank-btn" style="border-color:#2ecc71;" onclick="repayLoan(500)">Spłać 500</button>
+                            <button class="bank-btn" style="border-color:#2ecc71;" onclick="repayLoan(5000)">Spłać 5k</button>
+                            <button class="bank-btn" style="border-color:#2ecc71;" onclick="repayLoan(50000)">Spłać 50k</button>
+                            <button class="bank-btn full-width" style="border-color:#3498db; background:rgba(52,152,219,0.2);" onclick="repayHalfLoan()">Spłać Połowę (50%)</button>
+                            <button class="bank-btn full-width" style="border-color:#f1c40f; background:rgba(241,196,15,0.2);" onclick="repayAllLoans()">Spłać Całkowity Dług 🔥</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="bet-select">
+                    <label for="global-bet"><b>Wybierz stawkę:</b></label>
+                    <select id="global-bet">
+                        <option value="1">1 $</option>
+                        <option value="10" selected>10 $</option>
+                        <option value="100">100 $</option>
+                        <option value="1000">1 000 $</option>
+                        <option value="10000">10 000 $</option>
+                        <option value="100000">100 000 $</option>
+                        <option value="1000000">1 000 000 $</option>
+                        <option value="allin" style="color: #ff4757; font-weight: bold;">🔥 ALL IN!</option>
+                    </select>
+                </div>
+
+                <div id="message">Witaj w Grand Casino! Wybierz stawkę i grę.</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ZAKTUALIZOWANA INSTRUKCJA Z MNOŻNIKAMI DLA JEDNORĘKIEGO BANDYTY
+        const instructions = {
+            slots: `
+                <h3>🎰 Jednoręki Bandyta - Tabela Wygranych</h3>
+                <p>Ustaw stawkę, wybierz metodę (Przycisk lub Wajcha) i zakręć. System sprawdza układ trzech bębnów:</p>
+                <table class="slots-info-table">
+                    <tr><th>Układ Symboli</th><th>Mnożnik wygranej</th></tr>
+                    <tr><td>7️⃣ 7️⃣ 7️⃣ (Trzy Siódemki)</td><td><b>x20</b> <span style="color:#ffd700;">(Super Jackpot!)</span></td></tr>
+                    <tr><td>💎 💎 💎 (Trzy Diamenty)</td><td><b>x15</b></td></tr>
+                    <tr><td>🔔 🔔 🔔 (Trzy Dzwonki)</td><td><b>x10</b></td></tr>
+                    <tr><td>🍒/🍋/🍊/🍇 (Trzy te same owoce)</td><td><b>x5</b></td></tr>
+                    <tr><td>Dwa identyczne symbole (Dowolna para)</td><td><b>x1.5</b> <span style="color:#2ecc71;">(Zwrot z zyskiem)</span></td></tr>
+                    <tr><td>Brak powtórzeń</td><td><span style="color:#e74c3c;">Przegrana</span></td></tr>
+                </table>
+            `,
+            roulette: `<h3>🔴 Ruletka</h3><p>Typuj kolor czerwony/czarny (zwrot x2) lub wskaż idealny numer od 0 do 36, by zgarnąć aż <b>x35</b> wielokrotności swojej stawki!</p>`,
+            blackjack: `<h3>🃏 Blackjack 21</h3><p>Zbliż się do sumy 21 punktów. Nie przekrocz jej (Fura = przegrana). Dobieraj karty klikając 'Hit', kończ turę przyciskiem 'Stand'.</p>`,
+            sports: `<h3>⚽ Bukmacher</h3><p>Mecz symulowany na żywo w czasie przyspieszonym. Obstawiaj wygraną gospodarzy (1), remis (X) lub wygraną gości (2). Mnożnik to kurs spotkania.</p>`,
+            work: `<h3>🏢 Urząd Pracy</h3><p>Spłukałeś się? Tutaj zarobisz legalne i pewne pieniądze bez wkładu własnego. Poczekaj na koniec paska postępu!</p>`,
+            bank: `<h3>🏦 Bank Centralny</h3><p>Potrzebujesz zastrzyku gotówki? Weź pożyczkę. Pamiętaj, że bank ma losowy ukryty limit zadłużenia na sesję (od 50k do 300k $).</p>`
+        };
+
+        let balance = 1000, debt = 0;
+        let godModeActive = false;
+        const maxDebtLimit = Math.floor(Math.random() * (300000 - 50000 + 1)) + 50000;
+        let activeGame = 'slots', actionsLocked = false;
+
+        const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣'];
+        const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+        let selectedSportPrediction = null;
+
+        const cardSuits = ['♠', '♥', '♦', '♣'];
+        const cardValues = [
+            {n:'2', v:2}, {n:'3', v:3}, {n:'4', v:4}, {n:'5', v:5}, {n:'6', v:6}, {n:'7', v:7},
+            {n:'8', v:8}, {n:'9', v:9}, {n:'10', v:10}, {n:'J', v:10}, {n:'Q', v:10}, {n:'K', v:10}, {n:'A', v:11}
+        ];
+
+        window.onload = function() { generateNewMatch(); updateBalanceView(); updateInstructionText(); };
+
+        // --- OBSŁUGA PANELU ADMINISTRACYJNEGO ---
+        function toggleAdminPanel() { document.getElementById('admin-panel').classList.toggle('open'); }
+        
+        function adminAddMoney(amount) { 
+            balance += amount; 
+            updateBalanceView(); 
+            document.getElementById('message').innerHTML = `<span class='win'>[ADMIN] Przyznano +${amount.toLocaleString()} $</span>`; 
+        }
+        
+        function adminClearDebt() { 
+            debt = 0; 
+            updateBalanceView(); 
+            document.getElementById('message').innerHTML = `<span class='win'>[ADMIN] Dług został umorzony!</span>`; 
+        }
+        
+        function adminSetGodMode(status) {
+            godModeActive = status;
+            const statusLabel = document.getElementById('admin-god-status');
+            if(status) {
+                statusLabel.innerText = "WŁĄCZONY 😎";
+                statusLabel.style.color = "#2ecc71";
+                document.getElementById('message').innerHTML = `<span class='win'>[ADMIN] Tryb Boga Aktywowany! Zawsze wygrywasz.</span>`;
+            } else {
+                statusLabel.innerText = "WYŁĄCZONY";
+                statusLabel.style.color = "#e74c3c";
+                document.getElementById('message').innerHTML = `<span class='lose'>[ADMIN] Tryb Boga Dezaktywowany. Powrót do losowości.</span>`;
+            }
+        }
+
+        // --- ZAKŁADKI I INSTRUKCJE ---
+        function toggleInstructionBox() {
+            const box = document.getElementById('instruction-box');
+            box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+        }
+        function updateInstructionText() { document.getElementById('instruction-box').innerHTML = instructions[activeGame]; }
+
+        function switchGame(gameType) {
+            activeGame = gameType;
+            document.querySelectorAll('.game-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`game-${gameType}`).classList.add('active');
+            if (event && event.target) event.target.classList.add('active');
+            updateInstructionText();
+            if(gameType === 'slots') toggleControlMode();
+        }
+
+        function updateBalanceView() {
+            document.getElementById('balance').innerText = balance.toLocaleString('pl-PL');
+            document.getElementById('debt').innerText = debt.toLocaleString('pl-PL');
+        }
+
+        // --- ROZBUDOWANY MODUŁ BANKOWY ---
+        function takeLoan(amount) {
+            if(actionsLocked) return;
+            if(debt + amount > maxDebtLimit) { 
+                document.getElementById('message').innerHTML = "<span class='lose'>Bank Centralny odmówił kredytu. Przekroczono wewnętrzny limit ryzyka.</span>"; 
+                return; 
+            }
+            balance += amount; debt += amount; updateBalanceView();
+            document.getElementById('message').innerHTML = `<span class='win'>Otrzymano ${amount} $ kredytu.</span>`;
+        }
+        function repayLoan(amount) {
+            if(actionsLocked || debt <= 0) return;
+            if(balance < amount) { document.getElementById('message').innerHTML = "<span class='lose'>Masz za mało gotówki na tę spłatę.</span>"; return; }
+            let actualRepay = Math.min(amount, debt);
+            balance -= actualRepay; debt -= actualRepay; updateBalanceView();
+            document.getElementById('message').innerHTML = `Spłacono ${actualRepay} $ długu.`;
+        }
+        function repayHalfLoan() {
+            if(actionsLocked || debt <= 0) return;
+            let half = Math.ceil(debt / 2);
+            if(balance < half) { document.getElementById('message').innerHTML = "<span class='lose'>Nie masz wystarczających środków na spłatę połowy długu.</span>"; return; }
+            balance -= half; debt -= half; updateBalanceView();
+            document.getElementById('message').innerHTML = `Spłacono połowę długu (${half} $).`;
+        }
+        function repayAllLoans() { 
+            if(debt <= 0) return;
+            if(balance >= debt) { balance -= debt; debt = 0; updateBalanceView(); document.getElementById('message').innerHTML = "<span class='win'>Wszystkie długi zostały całkowicie spłacone!</span>"; } 
+            else { document.getElementById('message').innerHTML = "<span class='lose'>Za mało pieniędzy, by spłacić całość. Użyj mniejszych kwot lub spłaty połowy.</span>"; }
+        }
+
+        function getBet() { 
+            const s = document.getElementById('global-bet'); 
+            return s.value === 'allin' ? balance : parseInt(s.value); 
+        }
+
+        function disableAllButtons(status) {
+            actionsLocked = status;
+            document.getElementById('slots-btn').disabled = status;
+            document.getElementById('roulette-btn').disabled = status;
+            document.getElementById('bj-start-btn').disabled = status;
+            document.getElementById('sports-btn').disabled = status;
+            document.querySelectorAll('.tab-btn').forEach(b => b.disabled = status);
+            for(let i=1; i<=5; i++) {
+                let btn = document.getElementById(`job-btn-${i}`);
+                if(btn) btn.disabled = status;
+            }
+        }
+
+        // --- PRACA ---
+        function startJob(id, reward, duration) {
+            disableAllButtons(true);
+            const container = document.getElementById('job-progress-container'), bar = document.getElementById('job-progress-bar');
+            container.style.display = 'block'; bar.style.width = '0%';
+            let start = Date.now();
+            let inv = setInterval(() => {
+                let progress = ((Date.now() - start) / duration) * 100;
+                if(progress >= 100) { 
+                    clearInterval(inv); 
+                    container.style.display = 'none'; 
+                    balance += reward; 
+                    updateBalanceView(); 
+                    disableAllButtons(false); 
+                    document.getElementById('message').innerHTML = `<span class='win'>Ukończono pracę! Zarobiłeś ${reward} $</span>`;
+                }
+                else { bar.style.width = progress + '%'; }
+            }, 50);
+        }
+
+        // --- BUKMACHER ---
+        const teamsList = [
+            ["Real Madryt", "FC Barcelona"], ["Manchester City", "Liverpool FC"], 
+            ["Bayern Monachium", "Borussia Dortmund"], ["PSG", "Olympique Marsylia"],
+            ["Juventus", "AC Milan"]
+        ];
+        let currentMatchTeams = [];
+        function generateNewMatch() {
+            currentMatchTeams = teamsList[Math.floor(Math.random() * teamsList.length)];
+            document.getElementById('match-teams-display').innerText = `${currentMatchTeams[0]} vs ${currentMatchTeams[1]}`;
+            selectedSportPrediction = null;
+            document.querySelectorAll('.odds-btn').forEach(b => b.classList.remove('selected'));
+            document.getElementById('match-score-display').innerText = "0 : 0";
+            document.getElementById('match-minute').innerText = "Przed meczem";
+            document.getElementById('match-status').innerText = "Oczekiwanie na zakłady...";
+        }
+        function selectBetSport(t) { if(actionsLocked) return; selectedSportPrediction = t; document.querySelectorAll('.odds-btn').forEach(b => b.classList.remove('selected')); document.getElementById(`odds-${t}`).classList.add('selected'); }
+        function playSports() {
+            const bet = getBet(); 
+            if(!selectedSportPrediction) { document.getElementById('message').innerHTML = "<span class='lose'>Musisz najpierw wybrać wynik spotkania (1, X lub 2)!</span>"; return; }
+            if(bet <= 0 || balance < bet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak funduszy lub nieprawidłowa stawka.</span>"; return; }
+            
+            balance -= bet; updateBalanceView(); disableAllButtons(true);
+            document.getElementById('match-status').innerText = "Mecz trwa...";
+            let m = 0, sA = 0, sB = 0;
+            let currentOddVal = parseFloat(document.getElementById(`odd-${selectedSportPrediction}-val`).innerText);
+
+            let inv = setInterval(() => {
+                m += 15; 
+                if(Math.random() < 0.35) { 
+                    if(godModeActive) { 
+                        if(selectedSportPrediction==='1') sA++; else if(selectedSportPrediction==='2') sB++; 
+                    } else { 
+                        if(Math.random() > 0.5) sA++; else sB++; 
+                    } 
+                }
+                document.getElementById('match-minute').innerText = `${m}' min`;
+                document.getElementById('match-score-display').innerText = `${sA} : ${sB}`;
+                
+                if(m >= 90) {
+                    clearInterval(inv); 
+                    let res = 'X'; if(sA > sB) res = '1'; if(sB > sA) res = '2'; 
+                    if(godModeActive) res = selectedSportPrediction;
+                    
+                    document.getElementById('match-minute').innerText = "Koniec meczu";
+                    if(selectedSportPrediction === res) { 
+                        let winAmount = Math.floor(bet * currentOddVal);
+                        balance += winAmount; 
+                        document.getElementById('message').innerHTML = `<span class='win'>Kupon trafiony! Wygrywasz ${winAmount} $</span>`; 
+                    } else { 
+                        document.getElementById('message').innerHTML = "<span class='lose'>Kupon przegrany. Niespodzianka na boisku!</span>"; 
+                    }
+                    updateBalanceView(); disableAllButtons(false); generateNewMatch();
+                }
+            }, 250);
+        }
+
+        // --- AUTOMATY ---
+        function toggleControlMode() {
+            const m = document.querySelector('input[name="control-mode"]:checked').value;
+            document.getElementById('slots-btn-container').style.display = m==='button'?'block':'none';
+            document.getElementById('lever-container').style.display = m==='lever'?'flex':'none';
+        }
+        const handle = document.getElementById('lever-handle');
+        let isDragging = false, startY = 0;
+        handle.addEventListener('mousedown', (e) => { if(actionsLocked) return; isDragging = true; startY = e.clientY; });
+        window.addEventListener('mousemove', (e) => {
+            if(!isDragging || actionsLocked) return; let dY = e.clientY - startY; if(dY < 0) dY = 0; if(dY > 75) dY = 75; handle.style.top = dY+"px";
+            if(dY >= 75) { isDragging = false; handle.style.top = "0px"; playSlots(); }
+        });
+        window.addEventListener('mouseup', () => { isDragging = false; handle.style.top = "0px"; });
+
+        function playSlots() {
+            const bet = getBet(); if (bet <= 0 || balance < bet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak środków!</span>"; return; }
+            balance -= bet; updateBalanceView(); disableAllButtons(true);
+            let invs = [], slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
+            slots.forEach((s, i) => { invs.push(setInterval(() => { s.innerText = symbols[Math.floor(Math.random()*symbols.length)]; }, 60+i*30)); });
+            setTimeout(() => {
+                invs.forEach(clearInterval); let r = [];
+                if(godModeActive) { let s = '7️⃣'; r = [s,s,s]; }
+                else { r = [symbols[Math.floor(Math.random()*symbols.length)], symbols[Math.floor(Math.random()*symbols.length)], symbols[Math.floor(Math.random()*symbols.length)]]; }
+                slots[0].innerText = r[0]; slots[1].innerText = r[1]; slots[2].innerText = r[2];
+                
+                if(r[0]===r[1] && r[1]===r[2]) { 
+                    let multiplier = 5;
+                    if(r[0] === '7️⃣') multiplier = 20;
+                    else if(r[0] === '💎') multiplier = 15;
+                    else if(r[0] === '🔔') multiplier = 10;
+                    
+                    balance += bet * multiplier; 
+                    document.getElementById('message').innerHTML = `<span class='win'>JACKPOT! Trzy x ${r[0]}. Mnożnik x${multiplier}! Zyskujesz ${bet*multiplier} $</span>`; 
+                } else if(r[0]===r[1] || r[1]===r[2] || r[0]===r[2]) { 
+                    balance += Math.floor(bet * 1.5); 
+                    document.getElementById('message').innerHTML = `<span class='win'>Dopasowano parę! Zwrot x1.5 (${Math.floor(bet*1.5)} $)</span>`; 
+                } else { 
+                    document.getElementById('message').innerHTML = "<span class='lose'>Puste bębny. Spróbuj ponownie!</span>"; 
+                }
+                disableAllButtons(false); updateBalanceView();
+            }, 1000);
+        }
+
+        // --- RULETKA ---
+        function playRoulette() {
+            const bet = getBet(); if(bet<=0 || balance<bet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak środków!</span>"; return; }
+            const type = document.querySelector('input[name="roulette-type"]:checked').value;
+            const inputNum = document.getElementById('roulette-num').value.trim();
+            
+            if(type === 'number' && (inputNum === "" || isNaN(inputNum) || inputNum < 0 || inputNum > 36)) {
+                document.getElementById('message').innerHTML = "<span class='lose'>Wpisz poprawny numer (0-36) przed startem!</span>";
+                return;
+            }
+
+            balance -= bet; updateBalanceView(); disableAllButtons(true);
+            let ring = document.getElementById('roulette-ring'), num = 0;
+            let inv = setInterval(() => { ring.innerText = Math.floor(Math.random()*37); }, 50);
+            
+            setTimeout(() => {
+                clearInterval(inv); 
+                if(godModeActive) { 
+                    num = type === 'number' ? parseInt(inputNum) : (type === 'red' ? 1 : 2); 
+                } else { 
+                    num = Math.floor(Math.random()*37); 
+                }
+                
+                ring.innerText = num; 
+                let isRed = redNumbers.includes(num);
+                let won = false, winMultiplier = 2;
+
+                if(type === 'number' && parseInt(inputNum) === num) { won = true; winMultiplier = 35; } 
+                else if(type === 'red' && num !== 0 && isRed) { won = true; } 
+                else if(type === 'black' && num !== 0 && !isRed) { won = true; }
+
+                if(won) { 
+                    let winSum = bet * winMultiplier; balance += winSum; 
+                    document.getElementById('message').innerHTML = `<span class='win'>Wygrana! Trafiono zakład (Mnożnik x${winMultiplier}). Zysk: +${winSum} $</span>`; 
+                } else { 
+                    let colorName = num === 0 ? "Zielone" : (isRed ? "Czerwone" : "Czarne");
+                    document.getElementById('message').innerHTML = `<span class='lose'>Przegrana. Wypadło: ${num} (${colorName})</span>`; 
+                }
+                disableAllButtons(false); updateBalanceView();
+            }, 1000);
+        }
+
+        // --- BLACKJACK 21 ---
+        let pHand = [], dHand = [], cBet = 0;
+        function getScore(hand) { 
+            let s = hand.reduce((a,b)=>a+b.v, 0); 
+            let aces = hand.filter(c => c.n === 'A').length;
+            while(s > 21 && aces > 0) { s -= 10; aces--; }
+            return s;
+        }
+        function drawCard() {
+            let suit = cardSuits[Math.floor(Math.random()*cardSuits.length)];
+            let valObj = cardValues[Math.floor(Math.random()*cardValues.length)];
+            return { text: valObj.n + suit, v: valObj.v, n: valObj.n };
+        }
+        function startBlackjack() {
+            cBet = getBet(); if(cBet<=0 || balance<cBet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak środków!</span>"; return; }
+            balance -= cBet; updateBalanceView(); disableAllButtons(true);
+            
+            if(godModeActive) {
+                pHand = [{text:'A♣', v:11, n:'A'}, {text:'K♥', v:10, n:'K'}];
+                dHand = [{text:'7♠', v:7, n:'7'}];
+            } else {
+                pHand = [drawCard(), drawCard()];
+                dHand = [drawCard()];
+            }
+
+            document.getElementById('player-cards').innerText = pHand.map(c=>c.text).join(' ');
+            document.getElementById('dealer-cards').innerText = dHand.map(c=>c.text).join(' ') + " 🃏";
+            document.getElementById('player-score').innerText = getScore(pHand);
+            document.getElementById('dealer-score').innerText = getScore(dHand);
+            document.getElementById('bj-start-btn').style.display = 'none';
+            document.getElementById('bj-controls').style.display = 'flex';
+            document.getElementById('message').innerText = "Dobierasz (Hit) czy Pasujesz (Stand)?";
+            
+            if(getScore(pHand) === 21) { bjStand(); }
+        }
+        function bjHit() {
+            pHand.push(drawCard()); 
+            document.getElementById('player-cards').innerText = pHand.map(c=>c.text).join(' ');
+            let s = getScore(pHand); document.getElementById('player-score').innerText = s;
+            if(s > 21) endBj(false, 'Fura! Przekroczyłeś 21 punktów.');
+        }
+        function bjStand() {
+            let pScore = getScore(pHand);
+            if(godModeActive) {
+                dHand.push({text:'5♦', v:5, n:'5'});
+                let finalD = getScore(dHand);
+                document.getElementById('dealer-cards').innerText = dHand.map(c=>c.text).join(' ');
+                document.getElementById('dealer-score').innerText = finalD;
+                endBj(true, 'Wygrałeś z krupierem!', cBet*2);
+                return;
+            }
+            while(getScore(dHand) < 17) { dHand.push(drawCard()); }
+            let dScore = getScore(dHand);
+            document.getElementById('dealer-cards').innerText = dHand.map(c=>c.text).join(' ');
+            document.getElementById('dealer-score').innerText = dScore;
+
+            if(dScore > 21 || pScore > dScore) { endBj(true, `Wygrałeś! Twój wynik: ${pScore}, Krupier: ${dScore}`, cBet*2); }
+            else if(pScore === dScore) { endBj(true, 'Remis (Kasa wraca do Ciebie)', cBet); }
+            else { endBj(false, `Krupier wygrywa. Twój wynik: ${pScore}, Krupier: ${dScore}`); }
+        }
+        function endBj(w, t, payout=0) {
+            balance += payout; updateBalanceView(); document.getElementById('message').innerHTML = w?`<span class='win'>${t}</span>`:`<span class='lose'>${t}</span>`;
+            document.getElementById('bj-controls').style.display = 'none'; document.getElementById('bj-start-btn').style.display = 'inline-block'; disableAllButtons(false);
+        }
+    </script>
+</body>
+</html>
