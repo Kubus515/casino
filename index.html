@@ -233,15 +233,14 @@
         .admin-sidebar h2 { color: #ff4757; font-size: 1.2rem; margin-top: 0; }
         .admin-btn { background: #ff4757; color: #fff; border: none; padding: 8px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-bottom: 8px; width: 100%; font-size: 0.8rem; }
 
-        /* --- JEDNORĘKI BANDYTA (Z WAJCHĄ) --- */
+        /* --- JEDNORĘKI BANDYTA --- */
         .slots-machine-container { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 10px 0; }
         .slots-display { display: flex; justify-content: center; gap: 10px; }
         .slot { width: 60px; height: 60px; background: #fff; color: #000; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
-        
         .slots-lever { font-size: 3.5rem; cursor: pointer; transition: transform 0.15s ease-in-out; user-select: none; touch-action: manipulation; }
         .slots-lever.pulled { transform: rotateX(60deg) translateY(15px); }
 
-        /* --- RULETKA (Z KOLORAMI) --- */
+        /* --- RULETKA --- */
         .neon-roulette-ring { width: 100px; height: 100px; border-radius: 50%; margin: 10px auto; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; border: 6px solid #ffd700; background: #222; transition: background-color 0.3s, color 0.3s; }
         .neon-roulette-ring.bg-red { background-color: #e74c3c; color: #fff; border-color: #ffd700; }
         .neon-roulette-ring.bg-black { background-color: #2c3e50; color: #fff; border-color: #ffd700; }
@@ -274,7 +273,7 @@
         .msc-cell.selected::after { content: "X"; position: absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; background: rgba(231,76,60,0.85); font-weight:900; border-radius:3px; }
         .lotto-counter { font-size: 0.85rem; color: #aaa; margin-top: 5px; }
 
-        /* --- ZDRAPKA --- */
+        /* --- ZDRAPKA (ZAKTUALIZOWANA v1.24) --- */
         .scratch-card-area { background: linear-gradient(135deg, #6c5ce7, #a29bfe); border: 3px solid #ffd700; border-radius: 12px; padding: 12px; max-width: 280px; margin: 10px auto; }
         .scratch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .scratch-cell { width: 100%; aspect-ratio: 1; background: #ffeaa7; border: 2px dashed #fdcb6e; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; user-select: none; box-sizing: border-box; color: #2d3436; font-weight: bold; transition: background 0.2s; }
@@ -295,7 +294,7 @@
 </head>
 <body>
 
-    <div class="version-badge">v1.23a</div>
+    <div class="version-badge">v1.24</div>
 
     <button class="admin-trigger" onclick="toggleAdminPanel()">⚙️</button>
     <div class="admin-sidebar" id="admin-panel">
@@ -333,7 +332,6 @@
             <button class="info-toggle-btn" onclick="toggleInstructionBox()">📖 Zasady & Wygrane</button>
             <div class="tutorial-box" id="instruction-box"></div>
 
-            <!-- 1. JEDNORĘKI BANDYTA -->
             <div id="game-slots" class="game-section active">
                 <div class="slots-machine-container">
                     <div class="slots-display">
@@ -346,7 +344,6 @@
                 <button class="action-btn" id="slots-btn" onclick="playSlots()">ZAKRĘĆ BĘBNAMI!</button>
             </div>
 
-            <!-- 2. RULETKA -->
             <div id="game-roulette" class="game-section">
                 <div id="roulette-ring" class="neon-roulette-ring">🎰</div>
                 <div class="roulette-options">
@@ -357,7 +354,6 @@
                 <button class="action-btn" id="roulette-btn" style="margin-top:12px;" onclick="playRoulette()">OBRÓĆ KOŁEM</button>
             </div>
 
-            <!-- 3. BLACKJACK -->
             <div id="game-blackjack" class="game-section">
                 <div class="bj-table">
                     <div class="bj-hand">Krupier (<span id="dealer-score">?</span>)<div class="cards" id="dealer-cards">🃏 🃏</div></div>
@@ -370,7 +366,6 @@
                 <button class="action-btn" id="bj-start-btn" onclick="startBlackjack()">ROZDAJ KARTY</button>
             </div>
 
-            <!-- 4. BUGMAHER -->
             <div id="game-sports" class="game-section">
                 <div class="match-box">
                     <div id="match-teams-display" style="font-weight:bold; color:#ffd700;">Generowanie meczu...</div>
@@ -385,7 +380,6 @@
                 <button class="action-btn" id="sports-btn" style="margin-top:12px;" onclick="playSports()">POSTAW ZAKŁAD (30s)</button>
             </div>
 
-            <!-- 5. LOTTO -->
             <div id="game-lotto" class="game-section">
                 <div class="lotto-balls-container">
                     <div class="lotto-ball" id="lotto-b0">?</div>
@@ -405,9 +399,8 @@
                 <button class="action-btn" id="lotto-btn" style="margin-top:10px;" onclick="playLotto()">KUP KUPON I LOSUJ</button>
             </div>
 
-            <!-- 6. ZDRAPKA -->
             <div id="game-scratch" class="game-section">
-                <p style="margin:0 0 10px 0; font-size:0.85rem; color:#ccc;">Kup zdrapkę, a następnie klikaj pola, aby je odkryć! (Szansa znerfiona)</p>
+                <p style="margin:0 0 10px 0; font-size:0.85rem; color:#ccc;">Odkryj 9 pól. Im więcej takich samych symboli na karcie, tym wyższy mnożnik!</p>
                 <div class="scratch-card-area">
                     <div class="scratch-grid" id="scratch-board">
                         <div class="scratch-cell hidden" onclick="revealScratchCell(0)">?</div>
@@ -424,7 +417,6 @@
                 <button class="action-btn" id="scratch-buy-btn" onclick="buyScratchCard()">KUP NOWĄ ZDRAPKĘ</button>
             </div>
 
-            <!-- 7. PRACA -->
             <div id="game-work" class="game-section">
                 <div class="job-container">
                     <div class="job-card">
@@ -459,7 +451,6 @@
                 <div class="progress-container" id="job-progress-container" style="display:none; background:#222; border-radius:5px; margin-top:10px; overflow:hidden; border:1px solid #ffd700;"><div id="job-progress-bar" style="width:0%; height:12px; background:linear-gradient(90deg, #ffd700, #2ecc71);"></div></div>
             </div>
 
-            <!-- 8. BANK -->
             <div id="game-bank" class="game-section">
                 <div class="bank-grid">
                     <div class="bank-box-panel">
@@ -510,7 +501,7 @@
             blackjack: `<h3>🃏 Blackjack</h3><p>Dobieraj karty tak, by uzyskać jak najbliżej 21 punktów. Nie przekrocz tej liczby!</p>`,
             sports: `<h3>⚽ Bugmaher</h3><p>Mecz na żywo trwa pełne 30 sekund. Obstawiaj 1, X lub 2 prawdziwych klubów piłkarskich i śledź wynik na żywo!</p>`,
             lotto: `<h3>🎫 Lotto</h3><p>Zaznacz dokładnie 7 liczb z zakresu od 0 do 32.<br><b>Tabela Wygranych:</b><br>• 7 trafień: <b>x25 000</b><br>• 6 trafień: <b>x1 000</b><br>• 5 trafień: <b>x150</b><br>• 4 trafienia: <b>x10</b><br>• 3 trafienia: <b>x1.5</b></p>`,
-            scratch: `<h3>✨ Zdrapka</h3><p>Kup kartę za wybraną stawkę globalną. Znajdź 3 takie same symbole, aby wygrać:<br>• 3x 💎 = x50 stawki<br>• 3x 💰 = x15 stawki<br>• 3x 🔔 = x5 stawki<br>• 3x 🍒 = x2 stawki<br><i>Uwaga: Pula zawiera dużo symboli pustych ❌ (szanse znerfione!).</i></p>`,
+            scratch: `<h3>✨ Zdrapka</h3><p>Odkryj całą planszę (9 pól). Wygrane zależą od maksymalnej liczby tych samych symboli na karcie:<br>• 3 symbole = <b>x1.5</b><br>• 4 symbole = <b>x2</b><br>• 5 symboli = <b>x10</b><br>• 6 symboli = <b>x20</b><br>• 7 symboli = <b>x25</b><br>• 8 symboli = <b>x30</b><br>• 9 symboli = <b>x50</b></p>`,
             work: `<h3>🏢 Praca</h3><p>Zarabiaj pewne pieniądze bez ryzyka utraty funduszy. Wybierz z listy i czekaj.</p>`,
             bank: `<h3>🏦 Bank</h3><p>Pożyczaj pieniądze, gdy zabraknie Ci gotówki. Spłacaj zobowiązania jak najszybciej!</p>`
         };
@@ -524,11 +515,12 @@
         const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
         let selectedSportPrediction = null;
 
+        // Dane do Zdrapki (v1.24 - brak iksów, czyste symbole kasynowe)
         let scratchCardPurchased = false;
         let scratchSymbols = [];
         let revealedCellsCount = 0;
         let currentScratchBet = 0;
-        const scratchPool = ['🍒', '🍒', '🔔', '💰', '💎', '🍋', '🍊', '❌', '❌', '❌', '❌', '❌', '❌', '❌', '❌'];
+        const scratchPool = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣'];
 
         const teamsList = [["Real Madryt", "FC Barcelona"], ["Bayern Monachium", "Borussia Dortmund"], ["Manchester City", "Liverpool FC"], ["PSG", "Olympique Marsylia"], ["Juventus", "AC Milan"]];
         let currentMatchTeams = [];
@@ -670,7 +662,7 @@
             }, 400);
         }
 
-        /* --- MODUŁ: ZDRAPKA --- */
+        /* --- MODUŁ: ZDRAPKA (v1.24 REWRITE - SYSTEM TRAFIEŃ) --- */
         function buyScratchCard() {
             const bet = getBet();
             if(bet <= 0 || balance < bet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak środków na zakup zdrapki!</span>"; return; }
@@ -715,28 +707,34 @@
 
         function checkScratchWin() {
             let counts = {};
-            scratchSymbols.forEach(s => { if(s !== '❌') counts[s] = (counts[s] || 0) + 1; });
+            // Zliczanie powtórzeń poszczególnych symboli
+            scratchSymbols.forEach(s => { counts[s] = (counts[s] || 0) + 1; });
 
-            let winningSymbol = null;
+            // Znalezienie najwyższej liczby powtórzeń tego samego symbolu na zdrapce
+            let maxMatches = 0;
+            let bestSymbol = '';
             for(let sym in counts) {
-                if(counts[counts[sym] >= 3]) {
-                    winningSymbol = sym;
-                    break; 
+                if(counts[sym] > maxMatches) {
+                    maxMatches = counts[sym];
+                    bestSymbol = sym;
                 }
-                if(counts[sym] >= 3) { winningSymbol = sym; break; }
             }
 
-            if(winningSymbol) {
-                let mult = 2;
-                if(winningSymbol === '💎') mult = 50;
-                else if(winningSymbol === '💰') mult = 15;
-                else if(winningSymbol === '🔔') mult = 5;
+            let mult = 0;
+            if(maxMatches === 3) mult = 1.5;
+            else if(maxMatches === 4) mult = 2;
+            else if(maxMatches === 5) mult = 10;
+            else if(maxMatches === 6) mult = 20;
+            else if(maxMatches === 7) mult = 25;
+            else if(maxMatches === 8) mult = 30;
+            else if(maxMatches === 9) mult = 50;
 
+            if(mult > 0) {
                 let win = Math.floor(currentScratchBet * mult);
                 balance += win;
-                document.getElementById('message').innerHTML = `<span class='win'>Znalazłeś 3x ${winningSymbol}! Wygrywasz ${win} ${currentCurrency} (x${mult})!</span>`;
+                document.getElementById('message').innerHTML = `<span class='win'>Trafiono aż ${maxMatches}x ${bestSymbol}! Wygrywasz ${win} ${currentCurrency} (Mnożnik x${mult})!</span>`;
             } else {
-                document.getElementById('message').innerHTML = "<span class='lose'>Brak 3 takich samych symboli. Ta zdrapka była pusta!</span>";
+                document.getElementById('message').innerHTML = `<span class='lose'>Najwyższe powtórzenie to ${maxMatches}x. Brak wygranej (wymagane min. 3 takie same symbole).</span>`;
             }
             currentScratchBet = 0;
             updateBalanceView();
@@ -784,14 +782,13 @@
             }, 1000);
         }
 
-        /* --- JEDNORĘKI BANDYTA (Z WAJCHĄ 🕹️) --- */
+        /* --- JEDNORĘKI BANDYTA --- */
         function playSlots() {
             if(actionsLocked) return;
             const bet = getBet(); if(bet<=0 || balance<bet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak kasy!</span>"; return; }
             
             balance -= bet; updateBalanceView(); disableAllButtons(true);
             
-            // Animacja wajchy
             const lever = document.getElementById('machine-lever');
             lever.classList.add('pulled');
             setTimeout(() => lever.classList.remove('pulled'), 200);
@@ -814,7 +811,7 @@
             }, 800);
         }
 
-        /* --- RULETKA (Z PEŁNYMI KOLORAMI INTERFEJSU) --- */
+        /* --- RULETKA --- */
         function playRoulette() {
             const bet = getBet(); if(bet<=0 || balance<bet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak kasy!</span>"; return; }
             const type = document.querySelector('input[name="roulette-type"]:checked').value;
@@ -826,7 +823,6 @@
             let t = setInterval(() => { 
                 let randNum = Math.floor(Math.random()*37);
                 ring.innerText = randNum;
-                // Losowa zmiana kolorów podczas kręcenia dla efektu wizualnego
                 ring.className = "neon-roulette-ring " + (randNum === 0 ? "bg-green" : (redNumbers.includes(randNum) ? "bg-red" : "bg-black"));
             }, 50);
             
@@ -836,7 +832,6 @@
                 ring.innerText = num;
                 
                 let isRed = redNumbers.includes(num);
-                // Ustawienie ostatecznego, poprawnego koloru tła tarczy ruletki
                 ring.className = "neon-roulette-ring " + (num === 0 ? "bg-green" : (isRed ? "bg-red" : "bg-black"));
 
                 let won = false;
