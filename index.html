@@ -294,7 +294,7 @@
 </head>
 <body>
 
-    <div class="version-badge">v1.24a</div>
+    <div class="version-badge">v1.24b</div>
 
     <button class="admin-trigger" onclick="toggleAdminPanel()">⚙️</button>
     <div class="admin-sidebar" id="admin-panel">
@@ -511,6 +511,7 @@
         };
 
         let balance = 1000, debt = 0;
+        let bankLoanLimit = Math.floor(Math.random() * (1000000 - 5000 + 1)) + 5000;
         let godModeActive = false;
         let activeGame = 'slots', actionsLocked = false;
         let selectedLottoNumbers = [];
@@ -908,7 +909,15 @@
         }
 
         /* --- BANK --- */
-        function takeLoan(amt) { balance += amt; debt += amt; updateBalanceView(); }
+        function takeLoan(amt) { 
+            if (debt + amt > bankLoanLimit) {
+                document.getElementById('message').innerHTML = `<span class='lose'>Bank odmawia! Twój limit pożyczek wynosi ${bankLoanLimit.toLocaleString('pl-PL')} ${currentCurrency}</span>`;
+                return;
+            }
+            balance += amt; 
+            debt += amt; 
+            updateBalanceView(); 
+        }
         function repayLoan(amt) { let a = Math.min(amt, debt); if(balance>=a){ balance-=a; debt-=a; } updateBalanceView(); }
         function repayAllLoans() { if(balance>=debt){ balance-=debt; debt=0; } updateBalanceView(); }
     </script>
