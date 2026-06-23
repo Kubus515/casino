@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grand Casino, Sports & Central Bank</title>
+    <title>Grand Casino, Sports, Lotto & Central Bank</title>
     <style>
         body {
             background-color: #111;
@@ -298,6 +298,14 @@
         .odds-btn { background: #2c3e50; border: 1px solid #ffd700; color: #fff; padding: 8px; border-radius: 8px; cursor: pointer; font-weight: bold; flex: 1; font-size: 0.9rem; }
         .odds-btn.selected { background: #e67e22; border-color: #fff; }
 
+        /* --- LOTTO --- */
+        .lotto-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; max-width: 360px; margin: 15px auto; }
+        .lotto-ball { width: 45px; height: 45px; background: #34495e; border: 2px solid #7f8c8d; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; transition: all 0.2s; }
+        .lotto-ball.drawn { background: #f1c40f; color: #000; border-color: #fff; box-shadow: 0 0 10px #f1c40f; transform: scale(1.05); }
+        .lotto-inputs { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .lotto-num-input { width: 45px; height: 40px; text-align: center; font-size: 1.1rem; border: 2px solid #444; background: #222; color: #fff; border-radius: 6px; font-weight: bold; }
+        .lotto-num-input:focus { border-color: #ffd700; outline: none; }
+
         /* --- PRACA --- */
         .job-card { background: rgba(255, 255, 255, 0.05); border: 1px solid #444; border-radius: 12px; padding: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; text-align: left; }
         .job-details h3 { margin: 0 0 3px 0; color: #f1c40f; font-size: 1.1rem; }
@@ -314,8 +322,10 @@
 </head>
 <body>
 
-    <div class="version-badge">v1.20a</div>
+    <!-- WIDOCZNY ZNAK WERSJI GRY -->
+    <div class="version-badge">v1.21</div>
 
+    <!-- UKRYTY PANEL ADMINA -->
     <button class="admin-trigger" onclick="toggleAdminPanel()">⚙️</button>
 
     <div class="admin-sidebar" id="admin-panel">
@@ -345,6 +355,7 @@
                 <button class="tab-btn" id="tab-roulette" onclick="switchGame('roulette')">🔴 Ruletka</button>
                 <button class="tab-btn" id="tab-blackjack" onclick="switchGame('blackjack')">🃏 Blackjack</button>
                 <button class="tab-btn" id="tab-sports" onclick="switchGame('sports')">⚽ Bukmacher</button>
+                <button class="tab-btn" id="tab-lotto" style="border-color: #f1c40f;" onclick="switchGame('lotto')">🎫 Lotto</button>
                 <button class="tab-btn" id="tab-work" onclick="switchGame('work')">🏢 Praca</button>
                 <button class="tab-btn" id="tab-bank" style="border-color: #3498db;" onclick="switchGame('bank')">🏦 Bank</button>
             </div>
@@ -352,6 +363,7 @@
             <button class="info-toggle-btn" onclick="toggleInstructionBox()">📖 Pokaż instrukcję do gier</button>
             <div class="tutorial-box" id="instruction-box"></div>
 
+            <!-- 1. AUTOMATY -->
             <div id="game-slots" class="game-section active">
                 <div class="mode-selector">
                     <label class="mode-label"><input type="radio" name="control-mode" value="button" checked onchange="toggleControlMode()"> Przycisk SPIN</label>
@@ -371,6 +383,7 @@
                 <div id="slots-btn-container"><button class="action-btn" id="slots-btn" onclick="playSlots()">ZAKRĘĆ BĘBNAMI!</button></div>
             </div>
 
+            <!-- 2. RULETKA -->
             <div id="game-roulette" class="game-section">
                 <div id="roulette-ring" class="neon-roulette-ring">🎰</div>
                 <div>
@@ -384,6 +397,7 @@
                 <button class="action-btn" id="roulette-btn" style="margin-top:15px;" onclick="playRoulette()">OBRÓĆ KOŁEM</button>
             </div>
 
+            <!-- 3. BLACKJACK -->
             <div id="game-blackjack" class="game-section">
                 <div class="bj-table">
                     <div class="bj-hand"><div>Krupier (<span id="dealer-score">?</span>)</div><div class="cards" id="dealer-cards">🃏 🃏</div></div>
@@ -396,6 +410,7 @@
                 <button class="action-btn" id="bj-start-btn" onclick="startBlackjack()">ROZDAJ KARTY</button>
             </div>
 
+            <!-- 4. BUKMACHER -->
             <div id="game-sports" class="game-section">
                 <div class="match-box">
                     <div class="match-teams" id="match-teams-display">Mecz generowany...</div>
@@ -408,9 +423,32 @@
                         <button class="odds-btn" id="odds-2" onclick="selectBetSport('2')">2<br><span id="odd-2-val">2.50</span></button>
                     </div>
                 </div>
-                <button class="action-btn" id="sports-btn" style="margin-top: 15px;" onclick="playSports()">POSTAW ZAKŁAD</button>
+                <button class="action-btn" id="sports-btn" style="margin-top: 15px;" onclick="playSports()">POSTAW ZAKŁAD (30s)</button>
             </div>
 
+            <!-- 5. LOTTO -->
+            <div id="game-lotto" class="game-section">
+                <p style="margin-top:0; color:#aaa;">Wpisz 6 różnych liczb od 1 do 49:</p>
+                <div class="lotto-inputs">
+                    <input type="text" class="lotto-num-input" maxlength="2" id="lotto-i0">
+                    <input type="text" class="lotto-num-input" maxlength="2" id="lotto-i1">
+                    <input type="text" class="lotto-num-input" maxlength="2" id="lotto-i2">
+                    <input type="text" class="lotto-num-input" maxlength="2" id="lotto-i3">
+                    <input type="text" class="lotto-num-input" maxlength="2" id="lotto-i4">
+                    <input type="text" class="lotto-num-input" maxlength="2" id="lotto-i5">
+                </div>
+                <div class="lotto-grid">
+                    <div class="lotto-ball" id="lotto-b0">?</div>
+                    <div class="lotto-ball" id="lotto-b1">?</div>
+                    <div class="lotto-ball" id="lotto-b2">?</div>
+                    <div class="lotto-ball" id="lotto-b3">?</div>
+                    <div class="lotto-ball" id="lotto-b4">?</div>
+                    <div class="lotto-ball" id="lotto-b5">?</div>
+                </div>
+                <button class="action-btn" id="lotto-btn" style="background: linear-gradient(to bottom, #f1c40f, #f39c12);" onclick="playLotto()">KUP KUPON I LOSUJ</button>
+            </div>
+
+            <!-- 6. PRACA -->
             <div id="game-work" class="game-section">
                 <div class="job-card">
                     <div class="job-details"><h3>🍾 Zbieranie Miedzi i Butelek</h3><p>Zarobek: 15 $ | Czas: 2s</p></div>
@@ -435,6 +473,7 @@
                 <div class="progress-container" id="job-progress-container" style="display:none; background:#222; border-radius:5px; margin-top:10px; overflow:hidden; border:1px solid #ffd700;"><div class="progress-bar" id="job-progress-bar" style="width:0%; height:15px; background:linear-gradient(90deg, #ffd700, #2ecc71);"></div></div>
             </div>
 
+            <!-- 7. BANK -->
             <div id="game-bank" class="game-section">
                 <div class="bank-grid">
                     <div class="bank-panel-box">
@@ -503,8 +542,16 @@
             `,
             roulette: `<h3>🔴 Ruletka</h3><p>Typuj kolor czerwony/czarny (zwrot x2) lub wskaż idealny numer od 0 do 36, by zgarnąć aż <b>x35</b> wielokrotności swojej stawki!</p>`,
             blackjack: `<h3>🃏 Blackjack 21</h3><p>Zbliż się do sumy 21 punktów. Nie przekrocz jej (Fura = przegrana). Dobieraj karty klikając 'Hit', kończ turę przyciskiem 'Stand'.</p>`,
-            sports: `<h3>⚽ Bukmacher</h3><p>Mecz symulowany na żywo w czasie przyspieszonym. Obstawiaj wygraną gospodarzy (1), remis (X) lub wygraną gości (2). Mnożnik to kurs spotkania.</p>`,
-            work: `<h3>🏢 Urząd Pracy</h3><p>Spłukałeś się? Tutaj zarobisz legalne i pewne pieniądze bez wkładu własnego. Poczekaj na koniec paska postępu!</p>`,
+            sports: `<h3>⚽ Bukmacher</h3><p>Mecz symulowany na żywo. Trwa 30 sekund. Obstawiaj wygraną gospodarzy (1), remis (X) lub wygraną gości (2). Mnożnik to kurs spotkania.</p>`,
+            lotto: `<h3>🎫 Wielkie Lotto</h3><p>Wybierz 6 unikalnych liczb z przedziału od 1 do 49. Koszt kuponu to Twoja wybrana stawka bazowa. Tabela nagród:</p>
+                    <ul>
+                        <li><b>6 trafień:</b> x100 000 stawkia! 💰</li>
+                        <li><b>5 trafień:</b> x5 000 stawki</li>
+                        <li><b>4 trafienia:</b> x150 stawki</li>
+                        <li><li><b>3 trafienia:</b> x10 stawki</li>
+                        <li><b>2 trafienia:</b> x2 stawki (zwrot z zyskiem)</li>
+                    </ul>`,
+            work: `<h3>🏢 Urząd Pracy</h3><p>Spłukałeś się? Tutaj zarobisz legalne i pewne pieniażdze bez wkładu własnego. Poczekaj na koniec paska postępu!</p>`,
             bank: `<h3>🏦 Bank Centralny</h3><p>Potrzebujesz zastrzyku gotówki? Weź pożyczkę. Pamiętaj, że bank ma losowy ukryty limit zadłużenia na sesję (od 50k do 300k $).</p>`
         };
 
@@ -615,6 +662,7 @@
             document.getElementById('roulette-btn').disabled = status;
             document.getElementById('bj-start-btn').disabled = status;
             document.getElementById('sports-btn').disabled = status;
+            document.getElementById('lotto-btn').disabled = status;
             document.querySelectorAll('.tab-btn').forEach(b => b.disabled = status);
             for(let i=1; i<=5; i++) {
                 let btn = document.getElementById(`job-btn-${i}`);
@@ -657,6 +705,7 @@
             document.getElementById('match-status').innerText = "Oczekiwanie na zakłady...";
         }
         function selectBetSport(t) { if(actionsLocked) return; selectedSportPrediction = t; document.querySelectorAll('.odds-btn').forEach(b => b.classList.remove('selected')); document.getElementById(`odds-${t}`).classList.add('selected'); }
+        
         function playSports() {
             const bet = getBet(); 
             if(!selectedSportPrediction) { document.getElementById('message').innerHTML = "<span class='lose'>Musisz najpierw wybrać wynik spotkania (1, X lub 2)!</span>"; return; }
@@ -667,9 +716,10 @@
             let m = 0, sA = 0, sB = 0;
             let currentOddVal = parseFloat(document.getElementById(`odd-${selectedSportPrediction}-val`).innerText);
 
+            // Łączny czas meczu to 30 sekund (30000ms). Mecz ma 90 minut, więc co 333ms mija 1 minuta meczowa.
             let inv = setInterval(() => {
-                m += 15; 
-                if(Math.random() < 0.35) { 
+                m += 1; 
+                if(Math.random() < 0.04) { // Zmniejszona szansa na minutę, aby wyniki były realistyczne
                     if(godModeActive) { 
                         if(selectedSportPrediction==='1') sA++; else if(selectedSportPrediction==='2') sB++; 
                     } else { 
@@ -694,7 +744,81 @@
                     }
                     updateBalanceView(); disableAllButtons(false); generateNewMatch();
                 }
-            }, 250);
+            }, 333); // 90 powtórzeń po 333ms = ok. 30 sekund
+        }
+
+        function playLotto() {
+            const bet = getBet();
+            if(bet <= 0 || balance < bet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak funduszy na zakup kuponu Lotto!</span>"; return; }
+            
+            // Pobieranie liczb gracza
+            let playerNumbers = [];
+            for(let i=0; i<6; i++) {
+                let val = parseInt(document.getElementById(`lotto-i${i}`).value);
+                if(isNaN(val) || val < 1 || val > 49) {
+                    document.getElementById('message').innerHTML = "<span class='lose'>Wprowadź 6 poprawnych liczb od 1 do 49!</span>";
+                    return;
+                }
+                if(playerNumbers.includes(val)) {
+                    document.getElementById('message').innerHTML = "<span class='lose'>Liczby na kuponie nie mogą się powtarzać!</span>";
+                    return;
+                }
+                playerNumbers.push(val);
+            }
+
+            balance -= bet; updateBalanceView(); disableAllButtons(true);
+            
+            // Czyszczenie kulek wizualnych
+            for(let i=0; i<6; i++) {
+                let ball = document.getElementById(`lotto-b${i}`);
+                ball.innerText = "?";
+                ball.classList.remove('drawn');
+            }
+
+            let drawnNumbers = [];
+            let currentBallIndex = 0;
+
+            // Generowanie wylosowanych liczb
+            if(godModeActive) {
+                drawnNumbers = [...playerNumbers];
+            } else {
+                while(drawnNumbers.length < 6) {
+                    let rand = Math.floor(Math.random() * 49) + 1;
+                    if(!drawnNumbers.includes(rand)) drawnNumbers.push(rand);
+                }
+            }
+
+            // Animacja losowania kulek jedna po drugiej
+            let ballAnimationInterval = setInterval(() => {
+                let ball = document.getElementById(`lotto-b${currentBallIndex}`);
+                ball.innerText = drawnNumbers[currentBallIndex];
+                ball.classList.add('drawn');
+                
+                currentBallIndex++;
+                if(currentBallIndex >= 6) {
+                    clearInterval(ballAnimationInterval);
+                    
+                    // Liczenie trafień
+                    let hits = playerNumbers.filter(n => drawnNumbers.includes(n)).length;
+                    let payoutMultiplier = 0;
+                    
+                    if(hits === 2) payoutMultiplier = 2;
+                    else if(hits === 3) payoutMultiplier = 10;
+                    else if(hits === 4) payoutMultiplier = 150;
+                    else if(hits === 5) payoutMultiplier = 5000;
+                    else if(hits === 6) payoutMultiplier = 100000;
+
+                    if(payoutMultiplier > 0) {
+                        let winTotal = bet * payoutMultiplier;
+                        balance += winTotal;
+                        document.getElementById('message').innerHTML = `<span class='win'>TRAFIENIE! Liczba trafień: ${hits}/6. Wygrywasz x${payoutMultiplier} czyli ${winTotal} $! 🎫</span>`;
+                    } else {
+                        document.getElementById('message').innerHTML = `<span class='lose'>Kupon pusty. Trafień: ${hits}/6. Spróbuj innego zestawu liczb!</span>`;
+                    }
+                    
+                    disableAllButtons(false); updateBalanceView();
+                }
+            }, 500); // Nowa kulka co pół sekundy
         }
 
         function toggleControlMode() {
@@ -753,7 +877,6 @@
             balance -= bet; updateBalanceView(); disableAllButtons(true);
             let ring = document.getElementById('roulette-ring'), num = 0;
             
-            // Kolorowe koło w trakcie kręcenia
             let colorToggle = 0;
             let inv = setInterval(() => { 
                 ring.innerText = Math.floor(Math.random()*37); 
@@ -773,15 +896,14 @@
                 ring.innerText = num; 
                 let isRed = redNumbers.includes(num);
                 
-                // Stałe przypisanie koloru po zatrzymaniu
                 if(num === 0) {
-                    ring.style.backgroundColor = '#2ecc71'; // Zielony
+                    ring.style.backgroundColor = '#2ecc71'; 
                     ring.style.borderColor = '#2ecc71';
                 } else if(isRed) {
-                    ring.style.backgroundColor = '#e74c3c'; // Czerwony
+                    ring.style.backgroundColor = '#e74c3c'; 
                     ring.style.borderColor = '#e74c3c';
                 } else {
-                    ring.style.backgroundColor = '#2c3e50'; // Czarny
+                    ring.style.backgroundColor = '#2c3e50'; 
                     ring.style.borderColor = '#2c3e50';
                 }
 
