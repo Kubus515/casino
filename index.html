@@ -21,7 +21,6 @@
             box-sizing: border-box;
         }
 
-        /* STALOWY NUMER WERSJI W LEWYM DOLNYM ROGU */
         .version-badge {
             position: fixed;
             bottom: 10px;
@@ -37,7 +36,6 @@
             pointer-events: none;
         }
 
-        /* UKŁAD WYŚRODKOWANY / RESPONSYWNY */
         .main-container {
             display: flex;
             justify-content: center;
@@ -249,14 +247,14 @@
         .bj-hand { background: rgba(0,0,0,0.5); padding: 8px; border-radius: 8px; width: 48%; font-size: 0.85rem; }
         .cards { font-size: 1.4rem; margin-top: 5px; min-height: 30px; }
 
-        /* --- BUKMACHER --- */
+        /* --- BUGMAHER --- */
         .match-box { background: rgba(0, 0, 0, 0.6); border: 2px solid #34495e; border-radius: 12px; padding: 10px; }
         .match-live-score { font-size: 1.5rem; background: #111; padding: 4px 12px; border-radius: 6px; margin: 5px 0; font-family: monospace; }
         .match-odds-container { display: flex; gap: 8px; margin-top: 8px; }
         .odds-btn { background: #2c3e50; border: 1px solid #ffd700; color: #fff; padding: 6px; border-radius: 6px; flex: 1; font-size: 0.8rem; }
         .odds-btn.selected { background: #e67e22; }
 
-        /* --- LOTTO (STYL MY SUMMER CAR) --- */
+        /* --- LOTTO --- */
         .lotto-balls-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
         .lotto-ball { width: 34px; height: 34px; background: #34495e; border: 1px solid #7f8c8d; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.95rem; }
         .lotto-ball.drawn { background: #f1c40f; color: #000; box-shadow: 0 0 8px #f1c40f; }
@@ -290,12 +288,16 @@
 </head>
 <body>
 
-    <div class="version-badge">v1.22e</div>
+    <div class="version-badge">v1.23</div>
 
     <button class="admin-trigger" onclick="toggleAdminPanel()">⚙️</button>
     <div class="admin-sidebar" id="admin-panel">
         <h2>🛠️ Admin Panel</h2>
-        <button class="admin-btn" onclick="adminAddMoney(50000)">💰 +50 000 $</button>
+        <button class="admin-btn" onclick="adminAddMoney(50000)">💰 +50 000</button>
+        <button class="admin-btn" onclick="adminAddMoney(100000)">💰 +100 000</button>
+        <button class="admin-btn" onclick="adminAddMoney(1000000)">💰 +1 000 000</button>
+        <button class="admin-btn" style="background:#3498db;" onclick="adminToggleCurrency('zł')">💱 Waluta: ZŁ</button>
+        <button class="admin-btn" style="background:#3498db;" onclick="adminToggleCurrency('$')">💱 Waluta: $</button>
         <button class="admin-btn" onclick="adminSetGodMode(true)">😎 Tryb Boga ON</button>
         <button class="admin-btn" style="background:#7f8c8d;" onclick="adminSetGodMode(false)">🔴 Tryb Boga OFF</button>
         <button class="admin-btn" style="background:#555;" onclick="location.reload()">🔄 Reset</button>
@@ -306,15 +308,15 @@
             <h1>GRAND CASINO</h1>
             
             <div class="financial-display">
-                <div class="balance-box">Kasa: <span id="balance">1000</span> $</div>
-                <div class="balance-box">Dług: <span id="debt">0</span> $</div>
+                <div class="balance-box">Kasa: <span id="balance">1000</span> <span class="curr-sign">$</span></div>
+                <div class="balance-box">Dług: <span id="debt">0</span> <span class="curr-sign">$</span></div>
             </div>
 
             <div class="game-tabs">
-                <button class="tab-btn active" id="tab-slots" onclick="switchGame('slots')">🎰 Maszyny</button>
+                <button class="tab-btn active" id="tab-slots" onclick="switchGame('slots')">🎰 Jednoręki Bandyta</button>
                 <button class="tab-btn" id="tab-roulette" onclick="switchGame('roulette')">🔴 Ruletka</button>
                 <button class="tab-btn" id="tab-blackjack" onclick="switchGame('blackjack')">🃏 Blackjack</button>
-                <button class="tab-btn" id="tab-sports" onclick="switchGame('sports')">⚽ Sport</button>
+                <button class="tab-btn" id="tab-sports" onclick="switchGame('sports')">⚽ Bugmaher</button>
                 <button class="tab-btn" id="tab-lotto" style="border-color: #f1c40f;" onclick="switchGame('lotto')">🎫 Lotto</button>
                 <button class="tab-btn" id="tab-scratch" style="border-color: #a29bfe;" onclick="switchGame('scratch')">✨ Zdrapka</button>
                 <button class="tab-btn" id="tab-work" style="border-color: #2ecc71;" onclick="switchGame('work')">🏢 Praca</button>
@@ -324,7 +326,7 @@
             <button class="info-toggle-btn" onclick="toggleInstructionBox()">📖 Zasady & Wygrane</button>
             <div class="tutorial-box" id="instruction-box"></div>
 
-            <!-- 1. AUTOMATY -->
+            <!-- 1. JEDNORĘKI BANDYTA -->
             <div id="game-slots" class="game-section active">
                 <div class="slots-display">
                     <div class="slot" id="slot1">🍒</div>
@@ -358,7 +360,7 @@
                 <button class="action-btn" id="bj-start-btn" onclick="startBlackjack()">ROZDAJ KARTY</button>
             </div>
 
-            <!-- 4. BUKMACHER -->
+            <!-- 4. BUGMAHER -->
             <div id="game-sports" class="game-section">
                 <div class="match-box">
                     <div id="match-teams-display" style="font-weight:bold; color:#ffd700;">Generowanie meczu...</div>
@@ -373,7 +375,7 @@
                 <button class="action-btn" id="sports-btn" style="margin-top:12px;" onclick="playSports()">POSTAW ZAKŁAD (30s)</button>
             </div>
 
-            <!-- 5. LOTTO (STYL MY SUMMER CAR 7 LICZB) -->
+            <!-- 5. LOTTO -->
             <div id="game-lotto" class="game-section">
                 <div class="lotto-balls-container">
                     <div class="lotto-ball" id="lotto-b0">?</div>
@@ -393,9 +395,9 @@
                 <button class="action-btn" id="lotto-btn" style="margin-top:10px;" onclick="playLotto()">KUP KUPON I LOSUJ</button>
             </div>
 
-            <!-- 6. ZDRAPKA -->
+            <!-- 6. ZDRAPKA (NERFED CHANCES) -->
             <div id="game-scratch" class="game-section">
-                <p style="margin:0 0 10px 0; font-size:0.85rem; color:#ccc;">Kup zdrapkę za stawkę bazową, a następnie klikaj pola, aby je odkryć!</p>
+                <p style="margin:0 0 10px 0; font-size:0.85rem; color:#ccc;">Kup zdrapkę, a następnie klikaj pola, aby je odkryć! (Szansa znerfiona)</p>
                 <div class="scratch-card-area">
                     <div class="scratch-grid" id="scratch-board">
                         <div class="scratch-cell hidden" onclick="revealScratchCell(0)">?</div>
@@ -416,32 +418,32 @@
             <div id="game-work" class="game-section">
                 <div class="job-container">
                     <div class="job-card">
-                        <div class="job-details"><h3>🍾 Zbieranie złomu i butelek</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 25 $ | Czas: 2s</p></div>
+                        <div class="job-details"><h3>🍾 Zbieranie złomu i butelek</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 25 <span class="curr-sign">$</span> | Czas: 2s</p></div>
                         <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-1" onclick="startJob(1, 25, 2000)">Pracuj</button>
                     </div>
                     <div class="job-card">
-                        <div class="job-details"><h3>🪵 Rąbanie drewna dla Teimo</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 75 $ | Czas: 4s</p></div>
+                        <div class="job-details"><h3>🪵 Rąbanie drewna dla Teimo</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 75 <span class="curr-sign">$</span> | Czas: 4s</p></div>
                         <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-2" onclick="startJob(2, 75, 4000)">Pracuj</button>
                     </div>
                     <div class="job-card">
-                        <div class="job-details"><h3>📦 Magazynier / Kurier</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 180 $ | Czas: 6s</p></div>
+                        <div class="job-details"><h3>📦 Magazynier / Kurier</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 180 <span class="curr-sign">$</span> | Czas: 6s</p></div>
                         <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-3" onclick="startJob(3, 180, 6000)">Pracuj</button>
                     </div>
                     <div class="job-card">
-                        <div class="job-details"><h3>💩 Opróżnianie szamb (Gifu)</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 450 $ | Czas: 9s</p></div>
+                        <div class="job-details"><h3>💩 Opróżnianie szamb (Gifu)</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 450 <span class="curr-sign">$</span> | Czas: 9s</p></div>
                         <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-4" onclick="startJob(4, 450, 9000)">Pracuj</button>
                     </div>
                     <div class="job-card">
-                        <div class="job-details"><h3>🛠️ Naprawa silnika w Satsumie</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 950 $ | Czas: 12s</p></div>
+                        <div class="job-details"><h3>🛠️ Naprawa silnika w Satsumie</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 950 <span class="curr-sign">$</span> | Czas: 12s</p></div>
                         <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-5" onclick="startJob(5, 950, 12000)">Pracuj</button>
                     </div>
                     <div class="job-card">
-                        <div class="job-details"><h3>👨‍💻 Kodowanie stron web</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 2 100 $ | Czas: 16s</p></div>
+                        <div class="job-details"><h3>👨‍💻 Kodowanie stron web</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 2 100 <span class="curr-sign">$</span> | Czas: 16s</p></div>
                         <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-6" onclick="startJob(6, 2100, 16000)">Pracuj</button>
                     </div>
                     <div class="job-card">
-                        <div class="job-details"><h3>📈 Handel kryptowalutami</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 5 000 $ | Czas: 22s</p></div>
-                        <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-7" onclick="startJob(7, 5000, 22000)">Pracuj</button>
+                        <div class="job-details"><h3>📈 Handel kryptowalutami</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 5 000 <span class="curr-sign">$</span> | Czas: 30s</p></div>
+                        <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-7" onclick="startJob(7, 5000, 30000)">Pracuj</button>
                     </div>
                 </div>
                 <div class="progress-container" id="job-progress-container" style="display:none; background:#222; border-radius:5px; margin-top:10px; overflow:hidden; border:1px solid #ffd700;"><div id="job-progress-bar" style="width:0%; height:12px; background:linear-gradient(90deg, #ffd700, #2ecc71);"></div></div>
@@ -474,13 +476,13 @@
                 <div>
                     <label for="global-bet"><b>Stawka gry/kuponu:</b></label>
                     <select id="global-bet">
-                        <option value="5">5 $</option>
-                        <option value="10" selected>10 $</option>
-                        <option value="50">50 $</option>
-                        <option value="100">100 $</option>
-                        <option value="500">500 $</option>
-                        <option value="1000">1 000 $</option>
-                        <option value="5000">5 000 $</option>
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                        <option value="1000">1 000</option>
+                        <option value="5000">5 000</option>
                         <option value="allin" style="color:#ff4757; font-weight:bold;">🔥 ALL IN!</option>
                     </select>
                 </div>
@@ -491,14 +493,15 @@
     </div>
 
     <script>
+        let currentCurrency = "$";
         const instructions = {
-            slots: `<h3>🎰 Automaty</h3><p>Trzy identyczne symbole dają wielkie wygrane (Siódemki x20, Diamenty x15). Para daje zwrot x1.5.</p>`,
-            roulette: `<h3>🔴 Ruletka</h3><p>Typuj kolor (zwrot x2) lub dokładną liczbę od 0 do 36 (wypłata aż <b>x35</b>!).</p>`,
+            slots: `<h3>🎰 Jednoręki Bandyta</h3><p>Trzy identyczne symbole dają wielkie wygrane (Siódemki x20, Diamenty x15). Para daje zwrot x1.5.</p>`,
+            roulette: `<h3>🔴 Ruletka</h3><p>Typuj kolor (zwrot x2) lub dokładną liczbę od 0 do 36 (wypłata aż <b>x35</b>!). Czarna czy czerwona?</p>`,
             blackjack: `<h3>🃏 Blackjack</h3><p>Dobieraj karty tak, by uzyskać jak najbliżej 21 punktów. Nie przekrocz tej liczby!</p>`,
-            sports: `<h3>⚽ Bukmacher</h3><p>Mecz na żywo trwa pełne 30 sekund. Obstawiaj 1, X lub 2 i śledź wynik na żywo!</p>`,
-            lotto: `<h3>🎫 Lotto</h3><p>Zaznacz dokładnie 7 liczb z zakresu od 0 do 32.<br><b>Tabela Wygranych:</b><br>• 7 trafień: <b>x25 000</b> stawki<br>• 6 trafień: <b>x1 000</b> stawki<br>• 5 trafień: <b>x150</b> stawki<br>• 4 trafienia: <b>x10</b> stawki<br>• 3 trafienia: <b>x1.5</b> stawki</p>`,
-            scratch: `<h3>✨ Zdrapka</h3><p>Kup kartę za wybraną stawkę globalną. Kliknij na ukryte pola szarej siatki. Znajdź 3 takie same symbole, aby wygrać:<br>• 3x 💎 = x50 stawki<br>• 3x 💰 = x15 stawki<br>• 3x 🔔 = x5 stawki<br>• 3x 🍒 = x2 stawki</p>`,
-            work: `<h3>🏢 Praca</h3><p>Zarabiaj pewne pieniądze bez ryzyka utraty funduszy. Wybierz zlecenie z listy i poczekaj, aż pasek postępu osiągnie 100%.</p>`,
+            sports: `<h3>⚽ Bugmaher</h3><p>Mecz na żywo trwa pełne 30 sekund. Obstawiaj 1, X lub 2 prawdziwych klubów piłkarskich i śledź wynik na żywo!</p>`,
+            lotto: `<h3>🎫 Lotto</h3><p>Zaznacz dokładnie 7 liczb z zakresu od 0 do 32.<br><b>Tabela Wygranych:</b><br>• 7 trafień: <b>x25 000</b><br>• 6 trafień: <b>x1 000</b><br>• 5 trafień: <b>x150</b><br>• 4 trafienia: <b>x10</b><br>• 3 trafienia: <b>x1.5</b></p>`,
+            scratch: `<h3>✨ Zdrapka</h3><p>Kup kartę za wybraną stawkę globalną. Znajdź 3 takie same symbole, aby wygrać:<br>• 3x 💎 = x50 stawki<br>• 3x 💰 = x15 stawki<br>• 3x 🔔 = x5 stawki<br>• 3x 🍒 = x2 stawki<br><i>Uwaga: Pula zawiera dużo symboli pustych ❌ (szanse znerfione!).</i></p>`,
+            work: `<h3>🏢 Praca</h3><p>Zarabiaj pewne pieniądze bez ryzyka utraty funduszy. Wybierz z listy i czekaj.</p>`,
             bank: `<h3>🏦 Bank</h3><p>Pożyczaj pieniądze, gdy zabraknie Ci gotówki. Spłacaj zobowiązania jak najszybciej!</p>`
         };
 
@@ -511,12 +514,16 @@
         const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
         let selectedSportPrediction = null;
 
-        // Dane do Zdrapki (Zabezpieczone w v1.22e)
+        // Dane do Zdrapki (ZNERFIONE SZANSE w v1.23 - masa ❌ zmniejsza szansę na trio)
         let scratchCardPurchased = false;
         let scratchSymbols = [];
         let revealedCellsCount = 0;
-        let currentScratchBet = 0; // Zapamiętuje stawkę wejściową na czas drapania
-        const scratchPool = ['🍒', '🍒', '🍒', '🔔', '🔔', '💰', '💎', '🍋', '🍊'];
+        let currentScratchBet = 0;
+        const scratchPool = ['🍒', '🍒', '🔔', '💰', '💎', '🍋', '🍊', '❌', '❌', '❌', '❌', '❌', '❌', '❌', '❌'];
+
+        // Klasyczne, realne drużyny piłkarskie
+        const teamsList = [["Real Madryt", "FC Barcelona"], ["Bayern Monachium", "Borussia Dortmund"], ["Manchester City", "Liverpool FC"], ["PSG", "Olympique Marsylia"], ["Juventus", "AC Milan"]];
+        let currentMatchTeams = [];
 
         window.onload = function() { 
             buildMscLottoGrid();
@@ -527,6 +534,11 @@
 
         function toggleAdminPanel() { document.getElementById('admin-panel').classList.toggle('open'); }
         function adminAddMoney(amt) { balance += amt; updateBalanceView(); }
+        function adminToggleCurrency(c) {
+            currentCurrency = c;
+            document.querySelectorAll('.curr-sign').forEach(el => el.innerText = c);
+            updateBalanceView();
+        }
         function adminSetGodMode(val) { godModeActive = val; document.getElementById('message').innerText = val ? "Admin: Tryb Boga aktywowany!" : "Admin: Tryb Boga wyłączony."; }
 
         function toggleInstructionBox() {
@@ -641,7 +653,7 @@
                     if(mult > 0) {
                         let win = Math.floor(bet * mult);
                         balance += win;
-                        document.getElementById('message').innerHTML = `<span class='win'>Trafiono ${hits}/7 liczb! Wygrywasz ${win} $ (x${mult})</span>`;
+                        document.getElementById('message').innerHTML = `<span class='win'>Trafiono ${hits}/7 liczb! Wygrywasz ${win} ${currentCurrency} (x${mult})</span>`;
                     } else {
                         document.getElementById('message').innerHTML = `<span class='lose'>Trafień: ${hits}/7. Kupon nie wygrał (wymagane minimum 3 trafienia).</span>`;
                     }
@@ -650,12 +662,12 @@
             }, 400);
         }
 
-        /* --- MODUŁ: ZDRAPKA (POPRAWIONY DLA ALL IN W v1.22e) --- */
+        /* --- MODUŁ: ZDRAPKA (NERFED CHANCES) --- */
         function buyScratchCard() {
             const bet = getBet();
             if(bet <= 0 || balance < bet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak środków na zakup zdrapki!</span>"; return; }
             
-            currentScratchBet = bet; // ZAPAMIĘTUJEMY STAWKĘ (Kluczowa poprawka v1.22e)
+            currentScratchBet = bet;
             balance -= bet; 
             updateBalanceView();
             
@@ -695,7 +707,7 @@
 
         function checkScratchWin() {
             let counts = {};
-            scratchSymbols.forEach(s => counts[s] = (counts[s] || 0) + 1);
+            scratchSymbols.forEach(s => { if(s !== '❌') counts[s] = (counts[s] || 0) + 1; });
 
             let winningSymbol = null;
             for(let sym in counts) {
@@ -711,20 +723,17 @@
                 else if(winningSymbol === '💰') mult = 15;
                 else if(winningSymbol === '🔔') mult = 5;
 
-                // Korzystamy z bezpiecznie zapamiętanego currentScratchBet
                 let win = Math.floor(currentScratchBet * mult);
                 balance += win;
-                document.getElementById('message').innerHTML = `<span class='win'>Znalazłeś 3x ${winningSymbol}! Wygrywasz ${win} $ (x${mult})!</span>`;
+                document.getElementById('message').innerHTML = `<span class='win'>Znalazłeś 3x ${winningSymbol}! Wygrywasz ${win} ${currentCurrency} (x${mult})!</span>`;
             } else {
                 document.getElementById('message').innerHTML = "<span class='lose'>Brak 3 takich samych symboli. Ta zdrapka była pusta!</span>";
             }
-            currentScratchBet = 0; // Czyszczenie stawki po rozegraniu
+            currentScratchBet = 0;
             updateBalanceView();
         }
 
-        /* --- BUKMACHER --- */
-        const teamsList = [["Polska", "Niemcy"], ["Gamer", "Bot"], ["Suma", "Różnica"], ["My Summer Car", "Złom"]];
-        let currentMatchTeams = [];
+        /* --- BUGMAHER (STARE PRAWDZIWE KLUBY) --- */
         function generateNewMatch() {
             currentMatchTeams = teamsList[Math.floor(Math.random() * teamsList.length)];
             document.getElementById('match-teams-display').innerText = `${currentMatchTeams[0]} vs ${currentMatchTeams[1]}`;
@@ -746,7 +755,7 @@
 
             let inv = setInterval(() => {
                 m += 3;
-                if(Math.random() < 0.12) {
+                if(Math.random() < 0.15) {
                     if(Math.random() > 0.5) sA++; else sB++;
                 }
                 document.getElementById('match-minute').innerText = `${m}' min`;
@@ -757,16 +766,16 @@
                     let finalRes = 'X'; if(sA > sB) finalRes = '1'; if(sB > sA) finalRes = '2';
                     if(selectedSportPrediction === finalRes) {
                         let win = Math.floor(bet * odd); balance += win;
-                        document.getElementById('message').innerHTML = `<span class='win'>Wygrany zakład sportowy! Zyskujesz ${win} $</span>`;
+                        document.getElementById('message').innerHTML = `<span class='win'>Wygrany zakład! Zyskujesz ${win} ${currentCurrency}</span>`;
                     } else {
-                        document.getElementById('message').innerHTML = "<span class='lose'>Przegrałeś zakład u bukmachera.</span>";
+                        document.getElementById('message').innerHTML = "<span class='lose'>Przegrałeś kupon u Bugmahera.</span>";
                     }
                     disableAllButtons(false); updateBalanceView(); generateNewMatch();
                 }
             }, 1000);
         }
 
-        /* --- KLASYCZNE SYSTEMY KASYNOWE --- */
+        /* --- JEDNORĘKI BANDYTA --- */
         function playSlots() {
             const bet = getBet(); if(bet<=0 || balance<bet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak kasy!</span>"; return; }
             balance -= bet; updateBalanceView(); disableAllButtons(true);
@@ -779,31 +788,58 @@
                 slots.forEach((s,i) => s.innerText = res[i]);
                 if(res[0]===res[1] && res[1]===res[2]) {
                     let m = res[0]==='7️⃣'?20:(res[0]==='💎'?15:5);
-                    balance += bet*m; document.getElementById('message').innerHTML = `<span class='win'>JACKPOT x${m}! (+${bet*m} $)</span>`;
+                    balance += bet*m; document.getElementById('message').innerHTML = `<span class='win'>JACKPOT x${m}! (+${bet*m} ${currentCurrency})</span>`;
                 } else if(res[0]===res[1] || res[1]===res[2] || res[0]===res[2]) {
                     balance += Math.floor(bet*1.5); document.getElementById('message').innerHTML = `<span class='win'>Para! Zwrot x1.5</span>`;
-                } else { document.getElementById('message').innerHTML = "<span class='lose'>Pudło! Try znowu.</span>"; }
+                } else { document.getElementById('message').innerHTML = "<span class='lose'>Pudło! Spróbuj znowu.</span>"; }
                 disableAllButtons(false); updateBalanceView();
             }, 800);
         }
 
+        /* --- RULETKA (Z WERYFIKACJĄ KOLORU) --- */
         function playRoulette() {
             const bet = getBet(); if(bet<=0 || balance<bet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak kasy!</span>"; return; }
             const type = document.querySelector('input[name="roulette-type"]:checked').value;
+            const exactNumInput = document.getElementById('roulette-num').value;
+            
             balance -= bet; updateBalanceView(); disableAllButtons(true);
             let ring = document.getElementById('roulette-ring');
             let t = setInterval(() => { ring.innerText = Math.floor(Math.random()*37); }, 50);
+            
             setTimeout(() => {
                 clearInterval(t);
-                let num = Math.floor(Math.random()*37); ring.innerText = num;
+                let num = Math.floor(Math.random()*37); 
+                ring.innerText = num;
+                
                 let isRed = redNumbers.includes(num);
-                let won = (type==='red' && isRed && num!==0) || (type==='black' && !isRed && num!==0);
-                if(won) { balance += bet*2; document.getElementById('message').innerHTML = "<span class='win'>Trafiony kolor! x2</span>"; }
-                else { document.getElementById('message').innerHTML = `<span class='lose'>Przegrana. Wypadło ${num}</span>`; }
+                let won = false;
+                let payoutMult = 2;
+
+                if (type === 'number') {
+                    let targetNum = parseInt(exactNumInput);
+                    if (!isNaN(targetNum) && targetNum === num) {
+                        won = true;
+                        payoutMult = 35;
+                    }
+                } else if (type === 'red') {
+                    if (isRed && num !== 0) won = true;
+                } else if (type === 'black') {
+                    if (!isRed && num !== 0) won = true;
+                }
+
+                if(won) { 
+                    let winAmt = bet * payoutMult;
+                    balance += winAmt; 
+                    document.getElementById('message').innerHTML = `<span class='win'>Wygrana! Zyskujesz ${winAmt} ${currentCurrency} (x${payoutMult})</span>`; 
+                } else { 
+                    let rolledColor = (num === 0) ? "Zielone" : (isRed ? "Czerwone" : "Czarne");
+                    document.getElementById('message').innerHTML = `<span class='lose'>Przegrana. Wypadło ${num} (${rolledColor})</span>`; 
+                }
                 disableAllButtons(false); updateBalanceView();
             }, 1000);
         }
 
+        /* --- BLACKJACK (BEZ ZMIAN) --- */
         let pHand = [], dHand = [], cBet = 0;
         function getScore(h) { let s = h.reduce((a,b)=>a+b.v,0); let aces = h.filter(c=>c.n==='A').length; while(s>21 && aces>0){ s-=10; aces--; } return s; }
         function startBlackjack() {
@@ -821,7 +857,7 @@
         function bjStand() { balance += cBet*2; endBj(true, 'Wygrana blackjack!'); }
         function endBj(w, txt) { document.getElementById('message').innerHTML = w ? `<span class='win'>${txt}</span>` : `<span class='lose'>${txt}</span>`; document.getElementById('bj-controls').style.display = 'none'; document.getElementById('bj-start-btn').style.display = 'inline-block'; disableAllButtons(false); updateBalanceView(); }
 
-        /* --- SYSTEM PRACY --- */
+        /* --- SYSTEM PRACY (KRYPTO ZWIĘKSZONE DO 30s) --- */
         function startJob(id, reward, duration) { 
             disableAllButtons(true); 
             const container = document.getElementById('job-progress-container');
@@ -836,7 +872,7 @@
                     clearInterval(interval); 
                     container.style.display = 'none'; 
                     balance += reward; 
-                    document.getElementById('message').innerHTML = `<span class='win'>Ukończono pracę! Zarobiłeś ${reward} $</span>`;
+                    document.getElementById('message').innerHTML = `<span class='win'>Ukończono pracę! Zarobiłeś ${reward} ${currentCurrency}</span>`;
                     updateBalanceView(); 
                     disableAllButtons(false); 
                 } else { 
@@ -845,6 +881,7 @@
             }, 50); 
         }
 
+        /* --- BANK --- */
         function takeLoan(amt) { balance += amt; debt += amt; updateBalanceView(); }
         function repayLoan(amt) { let a = Math.min(amt, debt); if(balance>=a){ balance-=a; debt-=a; } updateBalanceView(); }
         function repayAllLoans() { if(balance>=debt){ balance-=debt; debt=0; } updateBalanceView(); }
