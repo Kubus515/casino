@@ -276,7 +276,8 @@
         .scratch-cell.hidden { background: repeating-linear-gradient(45deg, #74b9ff, #74b9ff 10px, #0984e3 10px, #0984e3 20px); color: transparent; }
 
         /* --- PRACA --- */
-        .job-card { background: rgba(255, 255, 255, 0.05); border: 1px solid #444; border-radius: 10px; padding: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; text-align: left; font-size: 0.85rem; }
+        .job-container { max-height: 380px; overflow-y: auto; padding-right: 5px; }
+        .job-card { background: rgba(255, 255, 255, 0.05); border: 1px solid #444; border-radius: 10px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; text-align: left; font-size: 0.85rem; }
         .job-details h3 { margin: 0; color: #f1c40f; font-size: 0.95rem; }
 
         /* --- BANK --- */
@@ -289,7 +290,7 @@
 </head>
 <body>
 
-    <div class="version-badge">v1.22b</div>
+    <div class="version-badge">v1.22c</div>
 
     <button class="admin-trigger" onclick="toggleAdminPanel()">⚙️</button>
     <div class="admin-sidebar" id="admin-panel">
@@ -316,7 +317,7 @@
                 <button class="tab-btn" id="tab-sports" onclick="switchGame('sports')">⚽ Sport</button>
                 <button class="tab-btn" id="tab-lotto" style="border-color: #f1c40f;" onclick="switchGame('lotto')">🎫 Lotto</button>
                 <button class="tab-btn" id="tab-scratch" style="border-color: #a29bfe;" onclick="switchGame('scratch')">✨ Zdrapka</button>
-                <button class="tab-btn" id="tab-work" onclick="switchGame('work')">🏢 Praca</button>
+                <button class="tab-btn" id="tab-work" style="border-color: #2ecc71;" onclick="switchGame('work')">🏢 Praca</button>
                 <button class="tab-btn" id="tab-bank" style="border-color: #3498db;" onclick="switchGame('bank')">🏦 Bank</button>
             </div>
 
@@ -372,7 +373,7 @@
                 <button class="action-btn" id="sports-btn" style="margin-top:12px;" onclick="playSports()">POSTAW ZAKŁAD (30s)</button>
             </div>
 
-            <!-- 5. LOTTO (STYL MY SUMMER CAR v1.22b) -->
+            <!-- 5. LOTTO (STYL MY SUMMER CAR 7 LICZB) -->
             <div id="game-lotto" class="game-section">
                 <div class="lotto-balls-container">
                     <div class="lotto-ball" id="lotto-b0">?</div>
@@ -411,19 +412,37 @@
                 <button class="action-btn" id="scratch-buy-btn" onclick="buyScratchCard()">KUP NOWĄ ZDRAPKĘ</button>
             </div>
 
-            <!-- 7. PRACA -->
+            <!-- 7. PRACA (PRZYWRÓCONE I ROZBUDOWANE DO 7 ZLECEŃ) -->
             <div id="game-work" class="game-section">
-                <div class="job-card">
-                    <div><h3>🍾 Zbieranie złomu</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 15 $ | Czas: 2s</p></div>
-                    <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-1" onclick="startJob(1, 15, 2000)">Pracuj</button>
-                </div>
-                <div class="job-card">
-                    <div><h3>📦 Magazyn / Kurier</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 70 $ | Czas: 6s</p></div>
-                    <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-2" onclick="startJob(2, 70, 6000)">Pracuj</button>
-                </div>
-                <div class="job-card">
-                    <div><h3>👨‍💻 Kodowanie stron</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 400 $ | Czas: 15s</p></div>
-                    <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-3" onclick="startJob(3, 400, 15000)">Pracuj</button>
+                <div class="job-container">
+                    <div class="job-card">
+                        <div class="job-details"><h3>🍾 Zbieranie złomu i butelek</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 15 $ | Czas: 2s</p></div>
+                        <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-1" onclick="startJob(1, 15, 2000)">Pracuj</button>
+                    </div>
+                    <div class="job-card">
+                        <div class="job-details"><h3>🪵 Rąbanie drewna dla Teimo</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 45 $ | Czas: 4s</p></div>
+                        <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-2" onclick="startJob(2, 45, 4000)">Pracuj</button>
+                    </div>
+                    <div class="job-card">
+                        <div class="job-details"><h3>📦 Magazynier / Kurier</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 90 $ | Czas: 6s</p></div>
+                        <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-3" onclick="startJob(3, 90, 6000)">Pracuj</button>
+                    </div>
+                    <div class="job-card">
+                        <div class="job-details"><h3>💩 Opróżnianie szamb (Gifu)</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 180 $ | Czas: 9s</p></div>
+                        <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-4" onclick="startJob(4, 180, 9000)">Pracuj</button>
+                    </div>
+                    <div class="job-card">
+                        <div class="job-details"><h3>🛠️ Naprawa silnika w Satsumie</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 320 $ | Czas: 12s</p></div>
+                        <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-5" onclick="startJob(5, 320, 12000)">Pracuj</button>
+                    </div>
+                    <div class="job-card">
+                        <div class="job-details"><h3>👨‍💻 Kodowanie stron web</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 550 $ | Czas: 16s</p></div>
+                        <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-6" onclick="startJob(6, 550, 16000)">Pracuj</button>
+                    </div>
+                    <div class="job-card">
+                        <div class="job-details"><h3>📈 Handel kryptowalutami</h3><p style="margin:2px 0 0 0; color:#aaa;">Zarobek: 1200 $ | Czas: 22s</p></div>
+                        <button class="action-btn" style="font-size:0.8rem; padding:5px 10px;" id="job-btn-7" onclick="startJob(7, 1200, 22000)">Pracuj</button>
+                    </div>
                 </div>
                 <div class="progress-container" id="job-progress-container" style="display:none; background:#222; border-radius:5px; margin-top:10px; overflow:hidden; border:1px solid #ffd700;"><div id="job-progress-bar" style="width:0%; height:12px; background:linear-gradient(90deg, #ffd700, #2ecc71);"></div></div>
             </div>
@@ -477,9 +496,9 @@
             roulette: `<h3>🔴 Ruletka</h3><p>Typuj kolor (zwrot x2) lub dokładną liczbę od 0 do 36 (wypłata aż <b>x35</b>!).</p>`,
             blackjack: `<h3>🃏 Blackjack</h3><p>Dobieraj karty tak, by uzyskać jak najbliżej 21 punktów. Nie przekrocz tej liczby!</p>`,
             sports: `<h3>⚽ Bukmacher</h3><p>Mecz na żywo trwa pełne 30 sekund. Obstawiaj 1, X lub 2 i śledź wynik na żywo!</p>`,
-            lotto: `<h3>🎫 Lotto (Wersja v1.22b)</h3><p>Zaznacz dokładnie 7 liczb z zakresu od 0 do 32.<br><b>Nowa Tabela Wygranych:</b><br>• 7 trafień: <b>x25 000</b> stawki<br>• 6 trafień: <b>x1 000</b> stawki<br>• 5 trafień: <b>x150</b> stawki<br>• 4 trafienia: <b>x10</b> stawki<br>• 3 trafienia: <b>x1.5</b> stawki<br>• Mniej niż 3 trafienia = brak wygranej</p>`,
+            lotto: `<h3>🎫 Lotto (Wersja v1.22c)</h3><p>Zaznacz dokładnie 7 liczb z zakresu od 0 do 32.<br><b>Tabela Wygranych:</b><br>• 7 trafień: <b>x25 000</b> stawki<br>• 6 trafień: <b>x1 000</b> stawki<br>• 5 trafień: <b>x150</b> stawki<br>• 4 trafienia: <b>x10</b> stawki<br>• 3 trafienia: <b>x1.5</b> stawki</p>`,
             scratch: `<h3>✨ Zdrapka</h3><p>Kup kartę za wybraną stawkę globalną. Kliknij na ukryte pola szarej siatki. Znajdź 3 takie same symbole, aby wygrać:<br>• 3x 💎 = x50 stawki<br>• 3x 💰 = x15 stawki<br>• 3x 🔔 = x5 stawki<br>• 3x 🍒 = x2 stawki</p>`,
-            work: `<h3>🏢 Praca</h3><p>Zarabiaj pewne pieniądze bez ryzyka. Poczekaj na załadowanie paska postępu pracy.</p>`,
+            work: `<h3>🏢 Praca (7 Stanowisk)</h3><p>Zarabiaj pewne pieniądze bez żadnego ryzyka utraty funduszy. Wybierz zlecenie z listy i poczekaj, aż pasek postępu osiągnie 100%.</p>`,
             bank: `<h3>🏦 Bank</h3><p>Pożyczaj pieniądze, gdy zabraknie Ci gotówki. Spłacaj zobowiązania jak najszybciej!</p>`
         };
 
@@ -544,9 +563,13 @@
             document.getElementById('lotto-btn').disabled = status;
             document.getElementById('scratch-buy-btn').disabled = status;
             document.querySelectorAll('.tab-btn').forEach(b => b.disabled = status);
+            for(let i=1; i<=7; i++) {
+                let btn = document.getElementById(`job-btn-${i}`);
+                if(btn) btn.disabled = status;
+            }
         }
 
-        /* --- LOTTO SYSTEM (STYL MY SUMMER CAR 0-32 / v1.22b) --- */
+        /* --- LOTTO SYSTEM (STYL MY SUMMER CAR 0-32 / v1.22c) --- */
         function buildMscLottoGrid() {
             const container = document.getElementById('lotto-msc-grid');
             container.innerHTML = "";
@@ -793,7 +816,30 @@
         function bjStand() { balance += cBet*2; endBj(true, 'Wygrana blackjack!'); }
         function endBj(w, txt) { document.getElementById('message').innerHTML = w ? `<span class='win'>${txt}</span>` : `<span class='lose'>${txt}</span>`; document.getElementById('bj-controls').style.display = 'none'; document.getElementById('bj-start-btn').style.display = 'inline-block'; disableAllButtons(false); updateBalanceView(); }
 
-        function startJob(id, r, d) { disableAllButtons(true); const c = document.getElementById('job-progress-container'), b = document.getElementById('job-progress-bar'); c.style.display='block'; b.style.width='0%'; let s = Date.now(); let inv = setInterval(() => { let p = ((Date.now()-s)/d)*100; if(p>=100){ clearInterval(inv); c.style.display='none'; balance+=r; updateBalanceView(); disableAllButtons(false); } else { b.style.width=p+'%'; } }, 50); }
+        /* --- SYSTEM PRACY --- */
+        function startJob(id, reward, duration) { 
+            disableAllButtons(true); 
+            const container = document.getElementById('job-progress-container');
+            const bar = document.getElementById('job-progress-bar'); 
+            container.style.display = 'block'; 
+            bar.style.width = '0%'; 
+            
+            let startTime = Date.now(); 
+            let interval = setInterval(() => { 
+                let progress = ((Date.now() - startTime) / duration) * 100; 
+                if(progress >= 100){ 
+                    clearInterval(interval); 
+                    container.style.display = 'none'; 
+                    balance += reward; 
+                    document.getElementById('message').innerHTML = `<span class='win'>Ukończono pracę! Zarobiłeś ${reward} $</span>`;
+                    updateBalanceView(); 
+                    disableAllButtons(false); 
+                } else { 
+                    bar.style.width = progress + '%'; 
+                } 
+            }, 50); 
+        }
+
         function takeLoan(amt) { balance += amt; debt += amt; updateBalanceView(); }
         function repayLoan(amt) { let a = Math.min(amt, debt); if(balance>=a){ balance-=a; debt-=a; } updateBalanceView(); }
         function repayAllLoans() { if(balance>=debt){ balance-=debt; debt=0; } updateBalanceView(); }
