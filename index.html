@@ -273,7 +273,7 @@
         .msc-cell.selected::after { content: "X"; position: absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; background: rgba(231,76,60,0.85); font-weight:900; border-radius:3px; }
         .lotto-counter { font-size: 0.85rem; color: #aaa; margin-top: 5px; }
 
-        /* --- ZDRAPKA (ZAKTUALIZOWANA v1.24) --- */
+        /* --- ZDRAPKA --- */
         .scratch-card-area { background: linear-gradient(135deg, #6c5ce7, #a29bfe); border: 3px solid #ffd700; border-radius: 12px; padding: 12px; max-width: 280px; margin: 10px auto; }
         .scratch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .scratch-cell { width: 100%; aspect-ratio: 1; background: #ffeaa7; border: 2px dashed #fdcb6e; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; user-select: none; box-sizing: border-box; color: #2d3436; font-weight: bold; transition: background 0.2s; }
@@ -294,7 +294,7 @@
 </head>
 <body>
 
-    <div class="version-badge">v1.24b</div>
+    <div class="version-badge">v1.24c</div>
 
     <button class="admin-trigger" onclick="toggleAdminPanel()">⚙️</button>
     <div class="admin-sidebar" id="admin-panel">
@@ -485,7 +485,7 @@
                         <option value="1000">1 000</option>
                         <option value="5000">5 000</option>
                         <option value="10000">10 000</option>
-                        <option value="50000">50 000</option>
+                        <option value="50000">5 000</option>
                         <option value="100000">100 000</option>
                         <option value="1000000">1 000 000</option>
                         <option value="allin" style="color:#ff4757; font-weight:bold;">🔥 ALL IN!</option>
@@ -520,7 +520,7 @@
         const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
         let selectedSportPrediction = null;
 
-        // Dane do Zdrapki (v1.24 - brak iksów, czyste symbole kasynowe)
+        // Dane do Zdrapki
         let scratchCardPurchased = false;
         let scratchSymbols = [];
         let revealedCellsCount = 0;
@@ -529,6 +529,14 @@
 
         const teamsList = [["Real Madryt", "FC Barcelona"], ["Bayern Monachium", "Borussia Dortmund"], ["Manchester City", "Liverpool FC"], ["PSG", "Olympique Marsylia"], ["Juventus", "AC Milan"]];
         let currentMatchTeams = [];
+
+        // Talia kart do Blackjacka
+        const cardSuits = ['♦', '♠', '♣', '♥'];
+        const cardValues = [
+            {n:'2', v:2}, {n:'3', v:3}, {n:'4', v:4}, {n:'5', v:5}, {n:'6', v:6},
+            {n:'7', v:7}, {n:'8', v:8}, {n:'9', v:9}, {n:'10', v:10},
+            {n:'J', v:10}, {n:'Q', v:10}, {n:'K', v:10}, {n:'A', v:11}
+        ];
 
         window.onload = function() { 
             buildMscLottoGrid();
@@ -667,7 +675,7 @@
             }, 400);
         }
 
-        /* --- MODUŁ: ZDRAPKA (v1.24 REWRITE - SYSTEM TRAFIEŃ) --- */
+        /* --- MODUŁ: ZDRAPKA --- */
         function buyScratchCard() {
             const bet = getBet();
             if(bet <= 0 || balance < bet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak środków na zakup zdrapki!</span>"; return; }
@@ -680,9 +688,14 @@
             revealedCellsCount = 0;
 
             scratchSymbols = [];
-            for(let i=0; i<9; i++) {
-                let randSym = scratchPool[Math.floor(Math.random() * scratchPool.length)];
-                scratchSymbols.push(randSym);
+            if(godModeActive) {
+                let chosen = scratchPool[Math.floor(Math.random() * scratchPool.length)];
+                for(let i=0; i<9; i++) scratchSymbols.push(chosen);
+            } else {
+                for(let i=0; i<9; i++) {
+                    let randSym = scratchPool[Math.floor(Math.random() * scratchPool.length)];
+                    scratchSymbols.push(randSym);
+                }
             }
 
             const cells = document.querySelectorAll('.scratch-cell');
@@ -712,10 +725,8 @@
 
         function checkScratchWin() {
             let counts = {};
-            // Zliczanie powtórzeń poszczególnych symboli
             scratchSymbols.forEach(s => { counts[s] = (counts[s] || 0) + 1; });
 
-            // Znalezienie najwyższej liczby powtórzeń tego samego symbolu na zdrapce
             let maxMatches = 0;
             let bestSymbol = '';
             for(let sym in counts) {
@@ -767,8 +778,14 @@
 
             let inv = setInterval(() => {
                 m += 3;
-                if(Math.random() < 0.15) {
-                    if(Math.random() > 0.5) sA++; else sB++;
+                if(godModeActive) {
+                    if(selectedSportPrediction === '1') sA = 3;
+                    else if(selectedSportPrediction === '2') sB = 3;
+                    else { sA = 1; sB = 1; }
+                } else {
+                    if(Math.random() < 0.15) {
+                        if(Math.random() > 0.5) sA++; else sB++;
+                    }
                 }
                 document.getElementById('match-minute').innerText = `${m}' min`;
                 document.getElementById('match-score-display').innerText = `${sA} : ${sB}`;
@@ -784,7 +801,7 @@
                     }
                     disableAllButtons(false); updateBalanceView(); generateNewMatch();
                 }
-            }, 1000);
+            }, 100);
         }
 
         /* --- JEDNORĘKI BANDYTA --- */
@@ -833,9 +850,17 @@
             
             setTimeout(() => {
                 clearInterval(t);
-                let num = Math.floor(Math.random()*37); 
-                ring.innerText = num;
                 
+                let num;
+                if(godModeActive) {
+                    if(type === 'number' && !isNaN(parseInt(exactNumInput))) num = parseInt(exactNumInput);
+                    else if(type === 'red') num = redNumbers[0];
+                    else num = 2; // czarne
+                } else {
+                    num = Math.floor(Math.random()*37); 
+                }
+
+                ring.innerText = num;
                 let isRed = redNumbers.includes(num);
                 ring.className = "neon-roulette-ring " + (num === 0 ? "bg-green" : (isRed ? "bg-red" : "bg-black"));
 
@@ -866,23 +891,99 @@
             }, 1000);
         }
 
-        /* --- BLACKJACK --- */
+        /* --- BLACKJACK (PEŁNA NAPRAWA v1.24c) --- */
         let pHand = [], dHand = [], cBet = 0;
-        function getScore(h) { let s = h.reduce((a,b)=>a+b.v,0); let aces = h.filter(c=>c.n==='A').length; while(s>21 && aces>0){ s-=10; aces--; } return s; }
+        
+        function getRandomCard() {
+            let valObj = cardValues[Math.floor(Math.random() * cardValues.length)];
+            let suit = cardSuits[Math.floor(Math.random() * cardSuits.length)];
+            return { v: valObj.v, n: valObj.n, text: valObj.n + suit };
+        }
+
+        function getScore(h) { 
+            let s = h.reduce((sum, card) => sum + card.v, 0); 
+            let aces = h.filter(card => card.n === 'A').length; 
+            while (s > 21 && aces > 0) { s -= 10; aces--; } 
+            return s; 
+        }
+
         function startBlackjack() {
-            cBet = getBet(); if(cBet<=0 || balance<cBet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak kasy!</span>"; return; }
-            balance -= cBet; updateBalanceView(); disableAllButtons(true);
-            pHand = [{v:10,n:'10',text:'10♦'}, {v:7,n:'7',text:'7♠'}]; dHand = [{v:8,n:'8',text:'8♣'}];
-            document.getElementById('player-cards').innerText = pHand.map(c=>c.text).join(' ');
-            document.getElementById('dealer-cards').innerText = dHand.map(c=>c.text).join(' ') + " 🃏";
+            cBet = getBet(); 
+            if(cBet <= 0 || balance < cBet) { document.getElementById('message').innerHTML = "<span class='lose'>Brak kasy!</span>"; return; }
+            
+            balance -= cBet; 
+            updateBalanceView(); 
+            disableAllButtons(true);
+
+            if(godModeActive) {
+                pHand = [{v:11, n:'A', text:'A♠'}, {v:10, n:'K', text:'K♦'}]; // 21 punktów naturalne
+                dHand = [{v:10, n:'10', text:'10♣'}, {v:7, n:'7', text:'7♥'}];
+            } else {
+                pHand = [getRandomCard(), getRandomCard()]; 
+                dHand = [getRandomCard(), getRandomCard()];
+            }
+
+            document.getElementById('player-cards').innerText = pHand.map(c => c.text).join(' ');
+            document.getElementById('dealer-cards').innerText = dHand[0].text + " 🃏";
+            
             document.getElementById('player-score').innerText = getScore(pHand);
-            document.getElementById('dealer-score').innerText = getScore(dHand);
+            document.getElementById('dealer-score').innerText = dHand[0].v;
+
             document.getElementById('bj-start-btn').style.display = 'none';
             document.getElementById('bj-controls').style.display = 'flex';
+            document.getElementById('message').innerText = "Wybierz akcję: Dobierz czy Pasujesz?";
+
+            if(getScore(pHand) === 21) {
+                bjStand();
+            }
         }
-        function bjHit() { pHand.push({v:4,n:'4',text:'4♥'}); document.getElementById('player-cards').innerText = pHand.map(c=>c.text).join(' '); let s = getScore(pHand); document.getElementById('player-score').innerText = s; if(s>21) endBj(false, 'Fura! Ponad 21.'); }
-        function bjStand() { balance += cBet*2; endBj(true, 'Wygrana blackjack!'); }
-        function endBj(w, txt) { document.getElementById('message').innerHTML = w ? `<span class='win'>${txt}</span>` : `<span class='lose'>${txt}</span>`; document.getElementById('bj-controls').style.display = 'none'; document.getElementById('bj-start-btn').style.display = 'inline-block'; disableAllButtons(false); updateBalanceView(); }
+
+        function bjHit() { 
+            pHand.push(getRandomCard()); 
+            document.getElementById('player-cards').innerText = pHand.map(c => c.text).join(' '); 
+            let s = getScore(pHand); 
+            document.getElementById('player-score').innerText = s; 
+            if(s > 21) endBj(false, `Fura! Masz ${s} punktów. Przegrana.`); 
+        }
+
+        function bjStand() { 
+            let dScore = getScore(dHand);
+            let pScore = getScore(pHand);
+
+            if(!godModeActive) {
+                while(dScore < 17) {
+                    dHand.push(getRandomCard());
+                    dScore = getScore(dHand);
+                }
+            }
+
+            document.getElementById('dealer-cards').innerText = dHand.map(c => c.text).join(' ');
+            document.getElementById('dealer-score').innerText = dScore;
+
+            if(godModeActive) {
+                balance += cBet * 2;
+                endBj(true, `Wygrałeś! Masz ${pScore}, krupier ma ${dScore}.`);
+            } else if (dScore > 21) {
+                balance += cBet * 2;
+                endBj(true, `Krupier przekroczył 21 (${dScore})! Wygrywasz.`);
+            } else if (pScore > dScore) {
+                balance += cBet * 2;
+                endBj(true, `Wygrałeś! Masz ${pScore} punktów, krupier ma ${dScore}.`);
+            } else if (pScore < dScore) {
+                endBj(false, `Przegrałeś. Masz ${pScore} punktów, krupier ma ${dScore}.`);
+            } else {
+                balance += cBet; // zwrot stawki
+                endBj(true, `Remis (${pScore} pkt). Odzyskujesz stawkę.`);
+            }
+        }
+
+        function endBj(w, txt) { 
+            document.getElementById('message').innerHTML = w ? `<span class='win'>${txt}</span>` : `<span class='lose'>${txt}</span>`; 
+            document.getElementById('bj-controls').style.display = 'none'; 
+            document.getElementById('bj-start-btn').style.display = 'inline-block'; 
+            disableAllButtons(false); 
+            updateBalanceView(); 
+        }
 
         /* --- SYSTEM PRACY --- */
         function startJob(id, reward, duration) { 
